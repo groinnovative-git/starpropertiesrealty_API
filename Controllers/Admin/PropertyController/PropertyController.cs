@@ -12,7 +12,7 @@ namespace Star_Properties.Controllers.Admin.PropertyController
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    [Authorize]
+    //[Authorize]
     public class PropertyController : ControllerBase
     {
         private readonly IPropertyBAL _bal;

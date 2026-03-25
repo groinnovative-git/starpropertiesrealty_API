@@ -101,7 +101,7 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.PropertyType = req.PropertyType;
             property.PropertySubType = req.PropertySubType;
             property.IsLoanProviding = req.IsLoanProviding;
-
+            property.PropertyStatus = req.PropertyStatus;
             property.PropertySqFt = req.PropertySqFt;
             property.PlotAreaSqYd = req.PlotAreaSqYd;
             property.Bedrooms = req.Bedrooms;
@@ -131,14 +131,17 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.HasFireSafety = req.HasFireSafety;
             property.HasWaterSupply24x7 = req.HasWaterSupply24x7;
 
-            // Save images safely
-            property.ImageUrls = imageUrls.Any() ? string.Join(";", imageUrls) : property.ImageUrls;
+            // Save images safely: new uploads > existing URLs from frontend > keep DB value
+            if (imageUrls.Any())
+                property.ImageUrls = string.Join(";", imageUrls);
+            else if (!string.IsNullOrEmpty(req.ImageUrls))
+                property.ImageUrls = req.ImageUrls;
 
             property.VideoUrl1 = req.VideoUrl1;
             property.VideoUrl2 = req.VideoUrl2;
             property.Description = req.Description;
             property.Location = req.Location;
-
+            property.IsActive = req.IsActive;
             property.UpdatedAt = DateTime.UtcNow;
             property.UpdatedBy = userId;
 
@@ -207,7 +210,11 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 VideoUrl1 = p.VideoUrl1,
                 VideoUrl2 = p.VideoUrl2,
                 Description = p.Description,
-                Location = p.Location
+                Location = p.Location,
+                LocationIframe = p.LocationIframe,
+                PropertyStatus = p.PropertyStatus,
+                IsActive = p.IsActive,
+
             }).ToList();
         }
 
@@ -259,7 +266,11 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 VideoUrl1 = property.VideoUrl1,
                 VideoUrl2 = property.VideoUrl2,
                 Description = property.Description,
-                Location = property.Location
+                Location = property.Location,
+                 LocationIframe = property.LocationIframe,
+                PropertyStatus = property.PropertyStatus,
+               IsActive = property.IsActive,
+
             };
         }
 

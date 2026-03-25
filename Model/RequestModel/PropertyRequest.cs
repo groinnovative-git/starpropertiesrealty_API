@@ -1,4 +1,6 @@
-﻿namespace Star_Properties.Model.RequestModel
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace Star_Properties.Model.RequestModel
 {
     public class PropertyRequest
     {
@@ -8,7 +10,8 @@
         public string PropertyType { get; set; }
         public string PropertySubType { get; set; }
         public bool IsLoanProviding { get; set; }
-
+        public string? PropertyStatus { get; set; }
+       
         // SPEC
         public decimal? PropertySqFt { get; set; }
         public decimal? PlotAreaSqYd { get; set; }
@@ -42,9 +45,10 @@
         public bool HasWaterSupply24x7 { get; set; }
 
         // MEDIA
-        //public List<string> ImageUrls { get; set; }
+        public string? ImageUrls { get; set; }  // existing image URLs (semicolon-separated) sent during update
 
-        public IFormFileCollection Images { get; set; }
+        [ValidateNever]
+        public IFormFileCollection? Images { get; set; }
 
         public string? VideoUrl1 { get; set; }
         public string? VideoUrl2 { get; set; }
@@ -53,5 +57,6 @@
         public string? Description { get; set; }
         public string? Location { get; set; }
         public string? LocationIframe { get; set; }
+        public bool IsActive { get; set; }
     }
 }

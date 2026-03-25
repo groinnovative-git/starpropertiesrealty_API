@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 
 namespace Star_Properties.Model.EntityModel
 {
@@ -13,7 +14,7 @@ namespace Star_Properties.Model.EntityModel
         public string? PropertyType { get; set; }
         public string? PropertySubType { get; set; }
         public bool IsLoanProviding { get; set; }
-
+        public string? PropertyStatus { get; set; } = "Active";
         // SPEC
         public decimal? PropertySqFt { get; set; }
         public decimal? PlotAreaSqYd { get; set; }

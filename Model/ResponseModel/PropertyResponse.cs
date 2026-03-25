@@ -50,8 +50,11 @@
         public string Description { get; set; }
         public string Location { get; set; }
 
+        public string LocationIframe { get; set; }
+
         // OPTIONAL: Additional Info
         public DateTime CreatedDate { get; set; }
-        public string Status { get; set; }  // e.g., Available, Sold, Rented
+        public string? PropertyStatus { get; set; }
+        public bool IsActive { get; set; }// e.g., Available, Sold, Rented
     }
 }
