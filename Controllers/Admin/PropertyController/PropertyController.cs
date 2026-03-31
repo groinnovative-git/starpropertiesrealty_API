@@ -10,6 +10,7 @@ using System.Security.Claims;
 
 namespace Star_Properties.Controllers.Admin.PropertyController
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
     //[Authorize]

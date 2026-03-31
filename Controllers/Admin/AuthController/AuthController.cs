@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Star_Properties.BAL.Interface.IAuthBAL;
 using Star_Properties.Model.RequestModel;
 
@@ -6,6 +7,7 @@ using Star_Properties.Model.RequestModel;
 
 namespace Star_Properties.Controllers.Admin.AuthController
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class AuthController : ControllerBase
