@@ -9,5 +9,6 @@ namespace Star_Properties.Repository.Interface.IAuthRepository
         Task CreateUserCrediential(UserMaster user);
         Task UpdateUserCrediential(UserMaster user);
         Task<string> DeleteUserCrediential(Guid deleteUserId, Guid modifiedBy);
-        Task<List<UserMaster>> GetUserCrediential()    }
+        Task<List<UserMaster>> GetUserCrediential();
+    }
 }

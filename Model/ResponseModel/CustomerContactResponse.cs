@@ -10,5 +10,8 @@
         public string Message { get; set; }
         public Guid? PropertyId { get; set; }
         public DateTime SubmittedDate { get; set; }
+        public string LeadStatus { get; set; } 
+        public Guid? ModifiedBy { get; set; }
+        public DateTime? ModifiedOn { get; set; }
     }
 }

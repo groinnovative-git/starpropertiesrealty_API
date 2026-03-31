@@ -17,5 +17,20 @@ namespace Star_Properties.BAL.Service.CustomerContactBAL
         {
             return await _repo.SubmitContact(request);
         }
+
+        public async Task<List<CustomerContactResponse>> GetAllContacts()
+        {
+            return await _repo.GetAllContacts();
+        }
+
+        public async Task<CustomerContactResponse> UpdateContact(CustomerContactRequest request, Guid userId)
+        {
+            return await _repo.UpdateContact(request, userId);
+        }
+
+        public async Task<List<CustomerContactAuditResponse>> GetContactAuditDetails(Guid contactId)
+        {
+            return await _repo.GetContactAuditDetails(contactId);
+        }
     }
 }

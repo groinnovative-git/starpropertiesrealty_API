@@ -11,6 +11,7 @@ namespace Star_Properties.DbConfiguration
         public DbSet<UserMaster> UserMaster { get; set; }
         public DbSet<PropertiesDetailsMaster> PropertiesDetailsMaster { get; set; }
         public DbSet<CustomerContactMaster> CustomerContactMaster { get; set; }
+        public DbSet<CustomerContactAudit> CustomerContactAudit { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

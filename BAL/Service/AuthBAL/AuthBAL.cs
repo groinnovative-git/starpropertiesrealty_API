@@ -42,6 +42,8 @@ namespace Star_Properties.BAL.Service.AuthBAL
             {
                 Token = token,
                 Username = user.Username,
+                Email = user.Email,
+                Name = user.Name,
                 Role = user.Role
             };
         }
@@ -95,10 +97,12 @@ namespace Star_Properties.BAL.Service.AuthBAL
             {
                 UserId = Guid.NewGuid(),
                 Username = request.Username,
+                Name = request.Name,
+                Email = request.Email,
                 Password = HashPassword(request.Password),
                 Role = request.Role,
                 IsActive = true,
-                CreatedOn = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = userId
             };
 
@@ -115,6 +119,8 @@ namespace Star_Properties.BAL.Service.AuthBAL
                 throw new Exception("User not found");
 
             user.Username = request.Username;
+            user.Email = request.Email;
+            user.Name = request.Name;
             user.Password = HashPassword(request.Password);
             user.ModifiedOn = DateTime.UtcNow;
             user.ModifiedBy = userId;

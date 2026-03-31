@@ -12,6 +12,9 @@ namespace Star_Properties.Model.EntityModel
         public string CustomerInterest { get; set; }
         public string Message { get; set; }
         public Guid? PropertyId { get; set; }
-        public DateTime SubmittedDate { get; set; }
+        public DateTime SubmittedDate { get; set; } = DateTime.UtcNow;
+        public string LeadStatus { get; set; } = "New"; 
+        public Guid? ModifiedBy { get; set; }
+        public DateTime? ModifiedOn { get; set; }
     }
 }
