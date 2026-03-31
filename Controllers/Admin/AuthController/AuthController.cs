@@ -17,6 +17,23 @@ namespace Star_Properties.Controllers.Admin.AuthController
             _authBAL = authBAL;
         }
 
+        private Guid GetUserIdFromToken()
+        {
+            try
+            {
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim))
+                    throw new UnauthorizedAccessException("Invalid token: UserId not found");
+
+                return Guid.Parse(userIdClaim);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error extracting userId from token: {ex.Message}", ex);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
@@ -27,7 +44,38 @@ namespace Star_Properties.Controllers.Admin.AuthController
             }
             catch
             {
-                return Unauthorized("Invalid email or password");
+                return Unauthorized("Invalid username or password");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUserCrediential(CreateUserRequest request)
+        {
+            try
+            {
+                var userId = GetUserIdFromToken();
+
+                var result = await _authBAL.CreateUserCrediential(request, userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateUserCrediential(UpdateUserRequest request)
+        {
+            try
+            {
+                var userId = GetUserIdFromToken();
+                var result = await _authBAL.UpdateUserCrediential(request,userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

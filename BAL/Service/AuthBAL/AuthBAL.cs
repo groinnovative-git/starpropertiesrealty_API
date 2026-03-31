@@ -4,6 +4,7 @@ using Star_Properties.Model.EntityModel;
 using Star_Properties.Model.RequestModel;
 using Star_Properties.Model.ResponseModel;
 using Star_Properties.Repository.Interface.IAuthRepository;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -23,7 +24,7 @@ namespace Star_Properties.BAL.Service.AuthBAL
 
         public async Task<LoginResponse> Login(LoginRequest request)
         {
-            var user = await _repo.GetUserByEmailAsync(request.Email);
+            var user = await _repo.GetUserByUsername(request.Username);
 
             if (user == null)
                 throw new Exception("Invalid credentials");
@@ -40,7 +41,7 @@ namespace Star_Properties.BAL.Service.AuthBAL
             return new LoginResponse
             {
                 Token = token,
-                Email = user.Email,
+                Username = user.Username,
                 Role = user.Role
             };
         }
@@ -55,7 +56,8 @@ namespace Star_Properties.BAL.Service.AuthBAL
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role),
                 new Claim("UserId", user.UserId.ToString())
             };
@@ -80,6 +82,46 @@ namespace Star_Properties.BAL.Service.AuthBAL
                 var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return BitConverter.ToString(bytes).Replace("-", "").ToLower();
             }
+        }
+
+        public async Task<string> CreateUserCrediential(CreateUserRequest request,Guid userId)
+        {
+            var existingUser = await _repo.GetUserByUsername(request.Username);
+
+            if (existingUser != null)
+                throw new Exception("User already exists");
+
+            var user = new UserMaster
+            {
+                UserId = Guid.NewGuid(),
+                Username = request.Username,
+                Password = HashPassword(request.Password),
+                Role = request.Role,
+                IsActive = true,
+                CreatedOn = DateTime.UtcNow,
+                CreatedBy = userId
+            };
+
+            await _repo.CreateUserCrediential(user);
+
+            return "User created successfully";
+        }
+
+        public async Task<string> UpdateUserCrediential(UpdateUserRequest request, Guid userId)
+        {
+            var user = await _repo.GetUserByUserId(request.UserId);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            user.Username = request.Username;
+            user.Password = HashPassword(request.Password);
+            user.ModifiedOn = DateTime.UtcNow;
+            user.ModifiedBy = userId;
+
+            await _repo.UpdateUserCrediential(user);
+
+            return "User updated successfully";
         }
     }
 }

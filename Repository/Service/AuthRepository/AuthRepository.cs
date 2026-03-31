@@ -15,9 +15,26 @@ namespace Star_Properties.Repository.Service.AuthRepository
             _context = context;
         }
 
-        public async Task<UserMaster> GetUserByEmailAsync(string email)
+        public async Task<UserMaster> GetUserByUsername(string username)
         {
-            return await _context.UserMaster.FirstOrDefaultAsync(x => x.Email == email && x.IsActive);
+            return await _context.UserMaster.FirstOrDefaultAsync(x => x.Username == username && x.IsActive);
+        }
+
+        public async Task<UserMaster> GetUserByUserId(Guid userId)
+        {
+            return await _context.UserMaster.FirstOrDefaultAsync(x => x.UserId == userId && x.IsActive);
+        }
+
+        public async Task CreateUserCrediential(UserMaster user)
+        {
+            await _context.UserMaster.AddAsync(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateUserCrediential(UserMaster user)
+        {
+            _context.UserMaster.Update(user);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -6,5 +6,7 @@ namespace Star_Properties.BAL.Interface.IAuthBAL
     public interface IAuthBAL
     {
         Task<LoginResponse> Login(LoginRequest request);
+        Task<string> CreateUserCrediential(CreateUserRequest request, Guid userId);
+        Task<string> UpdateUserCrediential(UpdateUserRequest request, Guid userId);
     }
 }
