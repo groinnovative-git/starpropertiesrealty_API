@@ -36,6 +36,7 @@ namespace Star_Properties.Controllers.Admin.AuthController
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(LoginRequest request)
         {
