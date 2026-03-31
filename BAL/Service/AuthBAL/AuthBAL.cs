@@ -123,5 +123,21 @@ namespace Star_Properties.BAL.Service.AuthBAL
 
             return "User updated successfully";
         }
+
+        public async Task<string> DeleteUserCrediential(DeleteUserCredientialsRequest request, Guid userId)
+        {
+            if (request == null || request.UserId == Guid.Empty)
+                return "Invalid Request";
+
+            var result = await _repo.DeleteUserCrediential(request.UserId, userId);
+
+            return result;
+        }
+
+        public async Task<List<UserMaster>> GetUserCrediential()
+        {
+            var result = await _repo.GetUserCrediential();
+            return result;
+        }
     }
 }

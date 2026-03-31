@@ -78,5 +78,34 @@ namespace Star_Properties.Controllers.Admin.AuthController
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUserCrediential(DeleteUserCredientialsRequest request)
+        {
+            try
+            {
+                var userId = GetUserIdFromToken();
+                var result = await _authBAL.DeleteUserCrediential(request, userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUserCrediential()
+        {
+            try
+            {
+                var result = await _authBAL.GetUserCrediential();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
