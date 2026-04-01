@@ -12,6 +12,7 @@ namespace Star_Properties.DbConfiguration
         public DbSet<PropertiesDetailsMaster> PropertiesDetailsMaster { get; set; }
         public DbSet<CustomerContactMaster> CustomerContactMaster { get; set; }
         public DbSet<CustomerContactAudit> CustomerContactAudit { get; set; }
+        public DbSet<EmailLog> EmailLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Has Been Updated</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f6f1e8; font-family:Arial, sans-serif;">
+    <table width="100%" style="background:#f6f1e8; padding:24px 0;">
+        <tr>
+            <td align="center">
+                <table width="680" style="background:#ffffff; border-radius:12px; overflow:hidden;">
+
+                    <!-- HEADER -->
+                    <tr>
+                        <td style="background:#174f3d; padding:20px; text-align:center;">
+                            <!-- CID LOGO -->
+                            <img src="cid:logo_cid" alt="{{companyName}}" width="150" style="margin-bottom:10px;" />
+
+                            <h2 style="color:#d4af37; margin:0;">Your Account Has Been Created</h2>
+                            <p style="color:#f3f4f6; font-size:14px;">
+                                Your login account has been created successfully.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- BODY -->
+                    <tr>
+                        <td style="padding:20px;">
+
+                            <p>Dear <b>{{employeeName}}</b>,</p>
+
+                            <p>Your account has been created successfully. Below are your login details:</p>
+
+                            <!-- ROLE -->
+                            <div style="background:#fff8e7; padding:15px; border-radius:8px; margin-bottom:15px;">
+                                <b>Role:</b> {{role}}
+                            </div>
+
+                            <!-- LOGIN DETAILS -->
+                            <div style="background:#faf8f3; padding:15px; border-radius:8px;">
+                                Name: {{employeeName}}<br />
+                                Username: {{username}}<br />
+                                Email: {{email}}<br />
+                                Password: {{password}}
+                            </div>
+
+                            <p style="margin-top:15px; color:#b45309;">
+                                Please change your password after first login.
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    <!-- FOOTER -->
+                    <tr>
+                        <td style="background:#f8f8f8; text-align:center; padding:15px; font-size:12px;">
+                            {{companyName}} • Do not reply to this email
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

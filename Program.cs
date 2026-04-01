@@ -4,16 +4,21 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Star_Properties.BAL.Interface.IAuthBAL;
 using Star_Properties.BAL.Interface.ICustomerContactBAL;
+using Star_Properties.BAL.Interface.IEmailBAL;
 using Star_Properties.BAL.Interface.IPropertyBAL;
 using Star_Properties.BAL.Service.AuthBAL;
 using Star_Properties.BAL.Service.CustomerContactBAL;
+using Star_Properties.BAL.Service.EmailBAL;
 using Star_Properties.BAL.Service.PropertyBAL;
 using Star_Properties.DbConfiguration;
+using Star_Properties.Model.RequestModel;
 using Star_Properties.Repository.Interface.IAuthRepository;
 using Star_Properties.Repository.Interface.ICustomerContactRepository;
+using Star_Properties.Repository.Interface.IEmailRepository;
 using Star_Properties.Repository.Interface.IPropertyRepository;
 using Star_Properties.Repository.Service.AuthRepository;
 using Star_Properties.Repository.Service.CustomerContactRepository;
+using Star_Properties.Repository.Service.EmailRepository;
 using Star_Properties.Repository.Service.PropertyRepository;
 using System.Text;
 
@@ -94,6 +99,12 @@ builder.Services.AddScoped<IPropertyRepository, PropertyRepository>();
 builder.Services.AddScoped<IPropertyBAL, PropertyBAL>();
 builder.Services.AddScoped<ICustomerContactBAL, CustomerContactBAL>();
 builder.Services.AddScoped<ICustomerContactRepository, CustomerContactRepository>();
+builder.Services.AddScoped<IEmailBAL, EmailBAL>();
+builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+
+builder.Services.Configure<SmtpSettings>(
+    builder.Configuration.GetSection("SmtpSettings"));
+
 
 
 builder.Services.AddControllers();

@@ -7,7 +7,8 @@ namespace Star_Properties.BAL.Interface.ICustomerContactBAL
     {
         Task<CustomerContactResponse> SubmitContact(CustomerContactRequest request);
         Task<List<CustomerContactResponse>> GetAllContacts();
-        Task<CustomerContactResponse> UpdateContact(CustomerContactRequest request, Guid userId);
+        //Task<CustomerContactResponse> UpdateContact(CustomerContactRequest request, Guid userId);
+        Task<CustomerContactUpdateResponse> UpdateContact(CustomerContactRequest request, Guid userId);
         Task<List<CustomerContactAuditResponse>> GetContactAuditDetails(Guid contactId);
     }
 }

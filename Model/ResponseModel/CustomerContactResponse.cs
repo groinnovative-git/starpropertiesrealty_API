@@ -14,4 +14,10 @@
         public Guid? ModifiedBy { get; set; }
         public DateTime? ModifiedOn { get; set; }
     }
+
+    public class CustomerContactUpdateResponse
+    {
+        public CustomerContactResponse Contact { get; set; }
+        public List<CustomerContactAuditResponse> AuditHistory { get; set; }
+    }
 }

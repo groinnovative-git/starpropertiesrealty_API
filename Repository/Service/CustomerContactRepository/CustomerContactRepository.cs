@@ -72,7 +72,56 @@ namespace Star_Properties.Repository.Service.CustomerContactRepository
                 }).ToList();
         }
 
-        public async Task<CustomerContactResponse> UpdateContact(CustomerContactRequest request, Guid userId)
+        //public async Task<CustomerContactResponse> UpdateContact(CustomerContactRequest request, Guid userId)
+        //{
+        //    var customerData = await _context.CustomerContactMaster
+        //        .FindAsync(request.ContactId);
+
+        //    if (customerData == null)
+        //        throw new Exception("Contact not found");
+
+        //    var audits = new List<CustomerContactAudit>();
+
+        //    // Track changes
+
+        //    if (customerData.FullName != request.FullName)
+        //    {
+        //        audits.Add(CreateAudit(customerData.ContactId, "FullName", customerData.FullName, request.FullName, userId));
+        //        customerData.FullName = request.FullName;
+        //    }
+
+        //    if (customerData.Email != request.Email)
+        //    {
+        //        audits.Add(CreateAudit(customerData.ContactId, "Email", customerData.Email, request.Email, userId));
+        //        customerData.Email = request.Email;
+        //    }
+
+        //    if (customerData.PhoneNumber != request.PhoneNumber)
+        //    {
+        //        audits.Add(CreateAudit(customerData.ContactId, "PhoneNumber", customerData.PhoneNumber, request.PhoneNumber, userId));
+        //        customerData.PhoneNumber = request.PhoneNumber;
+        //    }
+
+        //    if (customerData.LeadStatus != request.LeadStatus)
+        //    {
+        //        audits.Add(CreateAudit(customerData.ContactId, "LeadStatus", customerData.LeadStatus, request.LeadStatus, userId));
+        //        customerData.LeadStatus = request.LeadStatus;
+        //    }
+
+        //    // Update audit fields
+        //    customerData.ModifiedBy = userId;
+        //    customerData.ModifiedOn = DateTime.UtcNow;
+
+        //    // Save audits
+        //    if (audits.Any())
+        //        await _context.CustomerContactAudit.AddRangeAsync(audits);
+
+        //    await _context.SaveChangesAsync();
+
+        //    return MapToResponse(customerData);
+        //}
+
+        public async Task<CustomerContactUpdateResponse> UpdateContact(CustomerContactRequest request, Guid userId)
         {
             var customerData = await _context.CustomerContactMaster
                 .FindAsync(request.ContactId);
@@ -83,7 +132,6 @@ namespace Star_Properties.Repository.Service.CustomerContactRepository
             var audits = new List<CustomerContactAudit>();
 
             // Track changes
-
             if (customerData.FullName != request.FullName)
             {
                 audits.Add(CreateAudit(customerData.ContactId, "FullName", customerData.FullName, request.FullName, userId));
@@ -118,7 +166,26 @@ namespace Star_Properties.Repository.Service.CustomerContactRepository
 
             await _context.SaveChangesAsync();
 
-            return MapToResponse(customerData);
+            // FETCH UPDATED AUDIT LIST
+            var auditList = _context.CustomerContactAudit
+                .Where(x => x.ContactId == customerData.ContactId)
+                .OrderByDescending(x => x.ModifiedOn)
+                .Select(x => new CustomerContactAuditResponse
+                {
+                    Description =
+                        x.FieldName + " changed from '" + x.OldValue + "' to '" + x.NewValue +
+                        "' by " + x.ModifiedBy +
+                        " on " + x.ModifiedOn.ToString("dd-MMM-yyyy hh:mm tt"),
+
+                    ModifiedOn = x.ModifiedOn
+                })
+                .ToList();
+
+            return new CustomerContactUpdateResponse
+            {
+                Contact = MapToResponse(customerData),
+                AuditHistory = auditList
+            };
         }
 
         private CustomerContactAudit CreateAudit(Guid contactId, string field, string oldValue, string newValue, Guid userId)
