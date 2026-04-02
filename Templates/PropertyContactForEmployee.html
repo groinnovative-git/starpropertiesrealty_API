@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visit Request Received</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0; padding:0; background-color:#f6f1e8; font-family:'Poppins', Arial, Helvetica, sans-serif; color:#1b1b1b;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f6f1e8; margin:0; padding:24px 0;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="680" cellspacing="0" cellpadding="0" border="0" style="width:680px; max-width:680px; background:#ffffff; border-radius:18px; overflow:hidden; box-shadow:0 10px 35px rgba(0,0,0,0.10);">
+
+                    <tr>
+                        <td style="background:#174f3d; padding:20px; text-align:center;">
+
+                            <!-- TEXT LOGO -->
+                            <h1 style="color: #d4af37; margin: 0; font-size: 22px; font-weight: bold; letter-spacing: 1px;">
+                                StarPropertiesAndRealty
+                            </h1>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding:30px;">
+                            <p style="margin:0 0 16px; font-size:16px; line-height:28px; color:#374151;">
+                                Dear <strong>{{fullName}}</strong>,
+                            </p>
+                            <p style="margin:0 0 16px; font-size:15px; line-height:28px; color:#4b5563;">
+                                Thank you for showing interest in <strong>StarPropertiesAndRealty</strong>. We have received your schedule visit request and our team will contact you shortly.
+                            </p>
+
+                            <div style="background:#fff8e7; border:1px solid #ecdba3; border-radius:12px; padding:18px; margin-bottom:20px;">
+                                <p style="margin:0; font-size:12px; font-weight:600; color:#8a6a12; text-transform:uppercase; letter-spacing:1px;">Property Name</p>
+                                <p style="margin:8px 0 0; font-size:20px; color:#174f3d; font-weight:700;">{{propertyName}}</p>
+                            </div>
+
+                            <div style="background:#faf8f3; border:1px solid #ece7dc; border-radius:12px; padding:18px;">
+                                <p style="margin:0 0 10px; font-size:13px; font-weight:600; color:#7b7b7b; text-transform:uppercase; letter-spacing:1px;">Your Submitted Details</p>
+                                <p style="margin:0 0 8px; font-size:15px; color:#111827;"><strong>Name:</strong> {{fullName}}</p>
+                                <p style="margin:0 0 8px; font-size:15px; color:#111827;"><strong>Email:</strong> {{email}}</p>
+                                <p style="margin:0 0 8px; font-size:15px; color:#111827;"><strong>Phone:</strong> {{phone}}</p>
+                                <p style="margin:0 0 8px; font-size:15px; color:#111827;"><strong>Visit Date:</strong> {{visitDate}}</p>
+                                <p style="margin:0; font-size:15px; color:#111827;"><strong>Message:</strong> {{message}}</p>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="background:#f8f8f8; border-top:1px solid #ececec; padding:18px 30px; text-align:center;">
+                            <p style="margin:0; font-size:12px; line-height:20px; color:#6b7280;">
+                                Warm regards,<br />
+                                <strong style="color:#174f3d;">StarPropertiesAndRealty</strong>
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

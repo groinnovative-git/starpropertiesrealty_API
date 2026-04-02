@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Account Created</title>
+    <title>Account Has Been Updated</title>
 </head>
-<body style="margin:0; padding:0; background-color:#f6f1e8; font-family:Arial, sans-serif; color:#1b1b1b;">
+<body style="margin:0; padding:0; background-color:#f6f1e8; font-family:Arial, sans-serif;">
     <table width="100%" style="background:#f6f1e8; padding:24px 0;">
         <tr>
             <td align="center">
@@ -13,35 +13,34 @@
 
                     <!-- HEADER -->
                     <tr>
-                        <td style="background:#174f3d; padding:30px; text-align:center;">
+                        <td style="background:#174f3d; padding:20px; text-align:center;">
 
-                            {{logo}}
-
-                            <h2 style="color:#d4af37; margin:0;">New Account Created</h2>
-                        </td>   
+                            <!-- TEXT LOGO -->
+                            <h1 style="color: #d4af37; margin: 0; font-size: 22px; font-weight: bold; letter-spacing: 1px;">
+                                StarPropertiesAndRealty
+                            </h1>
+                        </td>
                     </tr>
 
                     <!-- BODY -->
                     <tr>
                         <td style="padding:20px;">
 
-                            <!-- CREATED BY -->
+                            <p>Dear <b>{{employeeName}}</b>,</p>
+
+                            <p>Your account has been created successfully. Below are your login details:</p>
+
+                            <!-- ROLE -->
                             <div style="background:#fff8e7; padding:15px; border-radius:8px; margin-bottom:15px;">
-                                <b>Created By : {{createdByName}}</b>
-                                <br />
-                                {{createdByUsername}} | {{createdByEmail}}
+                                <b>Role:</b> {{role}}
                             </div>
 
-                            <!-- EMPLOYEE DETAILS -->
+                            <!-- LOGIN DETAILS -->
                             <div style="background:#faf8f3; padding:15px; border-radius:8px;">
-                                <b>New Employee Details</b><br /><br />
-
                                 Name: {{employeeName}}<br />
-                                Role: {{role}}<br />
                                 Username: {{username}}<br />
                                 Email: {{email}}<br />
-                                Password: {{password}}<br />
-                                Created On: {{createdDateTime}}
+                                Password: {{password}}
                             </div>
 
                         </td>
@@ -49,8 +48,8 @@
 
                     <!-- FOOTER -->
                     <tr>
-                        <td style="background:#f8f8f8; text-align:center; padding:15px; font-size:12px;">
-                            {{companyName}} • System-generated email
+                        <td style="background:#f8f8f8; text-align:center; padding:15px; font-size:12px;">   
+                            {{companyName}} • Do not reply to this email
                         </td>
                     </tr>
 
