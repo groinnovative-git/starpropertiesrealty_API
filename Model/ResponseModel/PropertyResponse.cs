@@ -40,6 +40,60 @@
         public bool HasIntercom { get; set; }
         public bool HasFireSafety { get; set; }
         public bool HasWaterSupply24x7 { get; set; }
+        public bool? HasVisitorParking { get; set; }
+        public bool? HasGatedCommunity { get; set; }
+        public bool? HasPartyHall { get; set; }
+        public bool? HasPark { get; set; }
+        public bool? HasWalkingTrack { get; set; }
+        public bool? HasRainwaterHarvesting { get; set; }
+        public bool? HasWasteManagement { get; set; }
+        public bool? HasSeniorCitizenArea { get; set; }
+        public bool? HasTerrace { get; set; }
+        public bool? HasBalcony { get; set; }
+        public bool? HasServantRoom { get; set; }
+        public bool? HasSolarPower { get; set; }
+        public bool? HasEVChargingPoint { get; set; }
+        public bool? HasBlackTopRoad { get; set; }
+        public bool? HasCornerPlot { get; set; }
+        public bool? HasStreetLights { get; set; }
+        public bool? HasDrainageConnection { get; set; }
+        public bool? HasWaterConnection { get; set; }
+        public bool? HasElectricityConnection { get; set; }
+        public bool? HasUndergroundSewage { get; set; }
+        public bool? HasAvenueTrees { get; set; }
+        public bool? HasCompoundWall { get; set; }
+        public bool? HasFencing { get; set; }
+        public bool? IsReadyForConstruction { get; set; }
+        public bool? HasRoadAccess { get; set; }
+        public bool? HasWaterSource { get; set; }
+        public bool? HasBorewell { get; set; }
+        public bool? HasDripIrrigation { get; set; }
+        public bool? HasSprinklerSystem { get; set; }
+        public bool? HasFarmHouse { get; set; }
+        public bool? HasStorageShed { get; set; }
+        public bool? HasCattleShed { get; set; }
+        public bool? HasWatchmanRoom { get; set; }
+        public bool? HasSolarPump { get; set; }
+        public bool? HasTreePlantation { get; set; }
+        public bool? IsOrganicFarmingReady { get; set; }
+        public bool? HasRiverAccess { get; set; }
+        public bool? HasLakeView { get; set; }
+        public bool? HasHillView { get; set; }
+        public bool? HasPrivateEntrance { get; set; }
+        public bool? HasMunicipalityWaterSupply { get; set; }
+        public bool? HasStoreRoom { get; set; }
+        public bool? HasModularKitchen { get; set; }
+        public bool? HasWiFi { get; set; }
+        public bool? HasCentralizedAC { get; set; }
+        public bool? HasReceptionArea { get; set; }
+        public bool? HasConferenceRoom { get; set; }
+        public bool? HasPantry { get; set; }
+        public bool? HasRestrooms { get; set; }
+        public bool? HasServiceLift { get; set; }
+        public bool? HasLoadingBay { get; set; }
+        public bool? HasWheelchairAccess { get; set; }
+        public bool? HasMaintenanceStaff { get; set; }
+        public bool? HasGeneratorBackup { get; set; }
 
         // MEDIA
         public List<string> ImageUrls { get; set; }
