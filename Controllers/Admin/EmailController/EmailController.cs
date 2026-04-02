@@ -22,7 +22,7 @@ namespace Star_Properties.Controllers.Admin.EmailController
         [HttpPost]
         public async Task<IActionResult> SendEmail([FromBody] SendEmailRequest req)
         {
-            if (string.IsNullOrWhiteSpace(req.ToEmail))
+            if (req.ToEmails == null || !req.ToEmails.Any())
                 return BadRequest("Email is required");
 
             var result = await _bal.SendEmail(req, HttpContext);

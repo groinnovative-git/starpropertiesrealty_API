@@ -2,7 +2,8 @@
 {
     public class SendEmailRequest
     {
-        public string ToEmail { get; set; }
+        //public string ToEmail { get; set; }
+        public List<string> ToEmails { get; set; }
         public string TemplateName { get; set; }
 
         public string? FromEmail { get; set; }

@@ -3,6 +3,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using Star_Properties.BAL.Interface.IEmailBAL;
+using Star_Properties.DbConfiguration;
 using Star_Properties.Model.EntityModel;
 using Star_Properties.Model.RequestModel;
 using Star_Properties.Repository.Interface.IEmailRepository;
@@ -15,15 +16,18 @@ namespace Star_Properties.BAL.Service.EmailBAL
         private readonly IEmailRepository _repo;
         private readonly SmtpSettings _smtp;
         private readonly IConfiguration _appsettings;
+        private readonly ApplicationDbContext _context;
 
         public EmailBAL(
             IEmailRepository repo,
             IOptions<SmtpSettings> smtp,
-            IConfiguration appsettings)
+            IConfiguration appsettings,
+            ApplicationDbContext context)
         {
             _repo = repo;
             _smtp = smtp.Value;
             _appsettings = appsettings;
+            _context = context;
         }
 
         public async Task<bool> SendEmail(SendEmailRequest request, HttpContext httpContext)
@@ -32,7 +36,7 @@ namespace Star_Properties.BAL.Service.EmailBAL
             {
                 EmailId = Guid.NewGuid(),
                 FromEmail = _smtp.Username,
-                ToEmail = request.ToEmail,
+                ToEmail = "",
                 Subject = "",
                 Status = "Pending",
                 CreatedOn = DateTime.UtcNow
@@ -40,113 +44,26 @@ namespace Star_Properties.BAL.Service.EmailBAL
 
             try
             {
-                // 🔹 TEMPLATE CONFIG
-                var templates = new Dictionary<string, (string subject, string path, bool useSupportEmail)>
+                if (request.ToEmails == null || !request.ToEmails.Any())
+                    throw new Exception("Employee email is required");
+
+                // GET ADMIN EMAIL FROM DB
+                var adminEmail = _context.UserMaster
+                    .Where(x => x.Role == "Admin" && x.IsActive)
+                    .Select(x => x.Email)
+                    .FirstOrDefault();
+
+                // MERGE EMPLOYEE + ADMIN
+                var toEmails = request.ToEmails.ToList();
+
+                if (!string.IsNullOrWhiteSpace(adminEmail) &&
+                    !toEmails.Contains(adminEmail, StringComparer.OrdinalIgnoreCase))
                 {
-                    { "UserCreatedTemplate", ("New Account Created", "Templates/UserCreatedTemplate.html", true) },
-                    { "UserUpdatedTemplate", ("Account Has Been Updated", "Templates/UserUpdatedTemplate.html", true) }
-                };
-
-                if (!templates.TryGetValue(request.TemplateName, out var template))
-                    throw new Exception("Invalid Template");
-
-                log.Subject = template.subject;
-
-                // 🔹 FROM EMAIL
-                log.FromEmail = template.useSupportEmail
-                    ? (_appsettings["App:SupportEmail"] ?? _smtp.Username)
-                    : _smtp.Username;
-
-                // 🔹 READ TEMPLATE
-                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), template.path);
-
-                if (!File.Exists(templatePath))
-                    throw new Exception("Template file not found");
-
-                var html = await File.ReadAllTextAsync(templatePath);
-
-                // 🔥 DYNAMIC BASE URL
-                var req = httpContext.Request;
-                string baseUrl = $"{req.Scheme}://{req.Host}";
-
-                //string appLogoUrl = $"{baseUrl}/images/StarPropertiesLogo.png";
-                var appLogoUrl = "https://land.studiomart.in/images/logo_light.png";
-
-                string appLogoCid = "starproperties-logo";
-
-                // 🔥 CHECK GMAIL
-                bool isGmailRecipient =
-                    request.ToEmail?.EndsWith("@gmail.com", StringComparison.OrdinalIgnoreCase) == true ||
-                    request.ToEmail?.EndsWith("@googlemail.com", StringComparison.OrdinalIgnoreCase) == true;
-
-                // 🔥 LOGO HTML
-                var appLogoHtml = isGmailRecipient
-                    ? $@"<img src=""{appLogoUrl}"" alt=""{request.CompanyName ?? "StarProperties"}"" width=""140"" style=""display:block; margin:0 auto;"" />"
-                    : $@"<!--[if mso]>
-                            <img src=""cid:{appLogoCid}"" alt=""{request.CompanyName ?? "StarProperties"}"" width=""140"" style=""display:block; margin:0 auto;"" />
-                        <![endif]-->
-                        <!--[if !mso]><!-- -->
-                            <img src=""{appLogoUrl}"" alt=""{request.CompanyName ?? "StarProperties"}"" width=""140"" style=""display:block; margin:0 auto;"" />
-                        <!--<![endif]-->";
-
-
-            // 🔹 REPLACE PLACEHOLDERS
-            html = html
-                    .Replace("{{companyName}}", request.CompanyName ?? "Star Properties")
-                    .Replace("{{employeeName}}", request.EmployeeName ?? "")
-                    .Replace("{{role}}", request.Role ?? "")
-                    .Replace("{{username}}", request.Username ?? "")
-                    .Replace("{{email}}", request.ToEmail ?? "")
-                    .Replace("{{password}}", request.Password ?? "")
-                    .Replace("{{createdByName}}", request.CreatedByName ?? "")
-                    .Replace("{{createdByUsername}}", request.CreatedByUsername ?? "")
-                    .Replace("{{createdByEmail}}", request.CreatedByEmail ?? "")
-                    .Replace("{{createdDateTime}}", DateTime.Now.ToString("dd MMM yyyy hh:mm tt"))
-                    .Replace("{{logo}}", appLogoHtml);
-
-
-                // 🔹 BUILD EMAIL
-                var email = new MimeMessage();
-
-                var fromEmail = string.IsNullOrWhiteSpace(log.FromEmail)
-                    ? _smtp.Username
-                    : log.FromEmail;
-
-                email.From.Add(new MailboxAddress("Star Properties", fromEmail));
-                email.To.Add(MailboxAddress.Parse(request.ToEmail));
-                email.Subject = template.subject;
-
-                var bodyBuilder = new BodyBuilder
-                {
-                    HtmlBody = html,
-                    TextBody = "Email Notification"
-                };
-
-                // 🔥 INLINE ONLY FOR NON-GMAIL
-                if (!isGmailRecipient)
-                {
-                    try
-                    {
-                        using var http = new HttpClient();
-                        using var logoStream = await http.GetStreamAsync(appLogoUrl);
-
-                        var logo = bodyBuilder.LinkedResources.Add("StarPropertiesLogo.png", logoStream);
-
-                        logo.ContentId = appLogoCid;
-                        logo.ContentDisposition = new ContentDisposition(ContentDisposition.Inline);
-                        logo.ContentLocation = new Uri(appLogoUrl);
-                    }
-                    catch
-                    {
-                        // fallback → use URL only
-                        bodyBuilder.HtmlBody = bodyBuilder.HtmlBody
-                            .Replace($@"src=""cid:{appLogoCid}""", $@"src=""{appLogoUrl}""");
-                    }
+                    toEmails.Add(adminEmail);
                 }
 
-                email.Body = bodyBuilder.ToMessageBody();
+                log.ToEmail = string.Join(",", toEmails);
 
-                // 🔹 SEND EMAIL
                 using var smtp = new SmtpClient();
                 smtp.Timeout = 60000;
 
@@ -159,12 +76,85 @@ namespace Star_Properties.BAL.Service.EmailBAL
                 );
 
                 await smtp.AuthenticateAsync(_smtp.Username, _smtp.Password);
-                await smtp.SendAsync(email);
+
+                // LOOP ALL EMAILS (ADMIN + EMPLOYEE)
+                foreach (var to in toEmails)
+                {
+                    if (string.IsNullOrWhiteSpace(to))
+                        continue;
+
+                    // GET ROLE
+                    var user = _context.UserMaster
+                        .Where(x => x.Email == to && x.IsActive)
+                        .Select(x => new { x.Role })
+                        .FirstOrDefault();
+
+                    if (user == null)
+                        continue;
+
+                    string subject;
+                    string templatePath;
+
+                    // ROLE BASED TEMPLATE
+                    if (user.Role == "Admin")
+                    {
+                        subject = "New Account Created";
+                        templatePath = "Templates/UserCreatedTemplate.html";
+                    }
+                    else
+                    {
+                        subject = "Account Updated";
+                        templatePath = "Templates/UserUpdatedTemplate.html";
+                    }
+
+                    var fullPath = Path.Combine(Directory.GetCurrentDirectory(), templatePath);
+
+                    if (!File.Exists(fullPath))
+                        continue;
+
+                    var html = await File.ReadAllTextAsync(fullPath);
+
+                    // LOGO
+                    var logoUrl = "https://land.studiomart.in/images/logo_light.png";
+                    var logoHtml = $@"<img src=""{logoUrl}"" width=""140"" style=""display:block; margin:0 auto;"" />";
+
+                    // REPLACE VALUES
+                    html = html
+                        .Replace("{{companyName}}", request.CompanyName ?? "Star Properties")
+                        .Replace("{{employeeName}}", request.EmployeeName ?? "")
+                        .Replace("{{role}}", request.Role ?? "")
+                        .Replace("{{username}}", request.Username ?? "")
+                        .Replace("{{email}}", to)
+                        .Replace("{{password}}", request.Password ?? "")
+                        .Replace("{{createdByName}}", request.CreatedByName ?? "")
+                        .Replace("{{createdByUsername}}", request.CreatedByUsername ?? "")
+                        .Replace("{{createdByEmail}}", request.CreatedByEmail ?? "")
+                        .Replace("{{createdDateTime}}", DateTime.Now.ToString("dd MMM yyyy hh:mm tt"))
+                        .Replace("{{logo}}", logoHtml);
+
+                    var email = new MimeMessage();
+
+                    email.From.Add(new MailboxAddress("Star Properties", _smtp.Username));
+                    email.To.Add(MailboxAddress.Parse(to));
+                    email.Subject = subject;
+
+                    var bodyBuilder = new BodyBuilder
+                    {
+                        HtmlBody = html,
+                        TextBody = "Email Notification"
+                    };
+
+                    email.Body = bodyBuilder.ToMessageBody();
+
+                    await smtp.SendAsync(email);
+
+                    await Task.Delay(800); 
+                }
+
                 await smtp.DisconnectAsync(true);
 
-                // 🔹 LOG SUCCESS
                 log.Status = "Sent";
-                log.Body = html;
+                log.Body = "Emails sent successfully";
 
                 await _repo.SaveEmailLog(log);
 
