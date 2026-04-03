@@ -12,14 +12,19 @@
         // SPEC
         public decimal? PropertySqFt { get; set; }
         public decimal? PlotAreaSqYd { get; set; }
+        public string? PlotDimensions { get; set; }
+        public string? TotalLandArea { get; set; }
+        public decimal? PricePerAcre { get; set; }
         public int? Bedrooms { get; set; }
         public int? Bathrooms { get; set; }
         public int? NumberOfFloors { get; set; }
         public int? FloorNumber { get; set; }
+        public string? FloorDetails { get; set; }
         public decimal? MonthlyMaintenance { get; set; }
         public int? Washrooms { get; set; }
         public string CommercialType { get; set; }
-        public bool? IsGovApproved { get; set; }
+        public string? LandType { get; set; }
+        public string? GovApprovedCertificate { get; set; }
 
         // ATTRIBUTES
         public string FurnishingStatus { get; set; }
