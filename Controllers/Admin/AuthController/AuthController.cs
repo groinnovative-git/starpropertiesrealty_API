@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Star_Properties.BAL.Interface.IAuthBAL;
 using Star_Properties.BAL.Interface.IEmailBAL;
@@ -176,6 +176,26 @@ namespace Star_Properties.Controllers.Admin.AuthController
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> TrackVisitor()
+        {
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var userAgent = Request.Headers["User-Agent"].ToString();
+
+            await _authBAL.TrackVisitor(ip, userAgent);
+
+            return Ok();
+        }
+
+        // ✅ Dashboard Count
+        [HttpGet]
+        public async Task<IActionResult> GetVisitorDashboard()
+        {
+            var result = await _authBAL.GetVisitorDashboard();
+            return Ok(result);
         }
     }
 }

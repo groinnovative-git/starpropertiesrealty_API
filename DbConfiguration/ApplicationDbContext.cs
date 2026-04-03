@@ -13,6 +13,10 @@ namespace Star_Properties.DbConfiguration
         public DbSet<CustomerContactMaster> CustomerContactMaster { get; set; }
         public DbSet<CustomerContactAudit> CustomerContactAudit { get; set; }
         public DbSet<EmailLog> EmailLog { get; set; }
+        public DbSet<VisitorTracking> VisitorTracking { get; set; }
+        public DbSet<NotificationMaster> NotificationMaster { get; set; }
+        public DbSet<NotificationUserMapping> NotificationUserMapping { get; set; }
+        public DbSet<PropertyAudit> PropertyAudit { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

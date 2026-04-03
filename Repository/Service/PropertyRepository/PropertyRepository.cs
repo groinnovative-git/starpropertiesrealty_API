@@ -138,6 +138,21 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             _context.PropertiesDetailsMaster.Add(property);
             await _context.SaveChangesAsync();
 
+            var audit = new PropertyAudit
+            {
+                PropertyAuditId = Guid.NewGuid(),
+                PropertyId = property.PropertiesDetailsId,
+                FieldName = "Property",
+                OldValue = null,
+                NewValue = "Property Created",
+                ActionType = "Add",
+                ModifiedBy = userId,
+                ModifiedOn = DateTime.UtcNow
+            };
+
+            _context.PropertyAudit.Add(audit);
+            await _context.SaveChangesAsync();
+
             return property.PropertiesDetailsId;
         }
 
@@ -146,6 +161,13 @@ namespace Star_Properties.Repository.Service.PropertyRepository
         // ==========================
         public async Task UpdateProperty(PropertyRequest req, Guid userId)
         {
+            var oldProperty = await _context.PropertiesDetailsMaster
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.PropertiesDetailsId == req.PropertiesDetailsId);
+
+            if (oldProperty == null)
+                throw new Exception("Property not found");
+
             var property = await _context.PropertiesDetailsMaster
                 .FirstOrDefaultAsync(x => x.PropertiesDetailsId == req.PropertiesDetailsId);
 
@@ -263,6 +285,12 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.UpdatedAt = DateTime.UtcNow;
             property.UpdatedBy = userId;
 
+            var audits = TrackAllChanges(oldProperty, property, userId);
+
+            // STEP 5: SAVE ONCE (🔥 PERFORMANCE)
+            if (audits.Any())
+                await _context.PropertyAudit.AddRangeAsync(audits);
+
             await _context.SaveChangesAsync();
         }
 
@@ -280,6 +308,21 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.IsActive = false;
             property.UpdatedAt = DateTime.UtcNow;
 
+            await _context.SaveChangesAsync();
+
+            var audit = new PropertyAudit
+            {
+                PropertyAuditId = Guid.NewGuid(),
+                PropertyId = propertyId,
+                FieldName = "Property",
+                OldValue = "Active",
+                NewValue = "Deleted",
+                ActionType = "Delete",
+                ModifiedBy = Guid.Empty, 
+                ModifiedOn = DateTime.UtcNow
+            };
+
+            _context.PropertyAudit.Add(audit);
             await _context.SaveChangesAsync();
         }
 
@@ -620,6 +663,28 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             };
         }
 
+        public async Task<List<PropertyAuditResponse>> GetPropertyAudit(Guid propertyId)
+        {
+            return await _context.PropertyAudit
+                .Where(x => x.PropertyId == propertyId)
+                .OrderByDescending(x => x.ModifiedOn)
+                .Join(
+                    _context.UserMaster,
+                    audit => audit.ModifiedBy,
+                    user => user.UserId,
+                    (audit, user) => new PropertyAuditResponse
+                    {
+                        Description = audit.ActionType == "Update"
+                            ? $"{audit.FieldName} changed from '{audit.OldValue}' to '{audit.NewValue}' by {user.Name} on {audit.ModifiedOn:dd-MMM-yyyy hh:mm tt}"
+                            : $"{audit.ActionType} by {user.Name} on {audit.ModifiedOn:dd-MMM-yyyy hh:mm tt}",
+
+                        Name = user.Name,
+                        ModifiedOn = audit.ModifiedOn
+                    }
+                )
+                .ToListAsync();
+        }
+
         // ==========================
         // SAVE IMAGES
         // ==========================
@@ -651,6 +716,52 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             }
 
             return imageUrls;
+        }
+
+        private List<PropertyAudit> TrackAllChanges(
+            PropertiesDetailsMaster oldData,
+            PropertiesDetailsMaster newData,
+            Guid userId)
+        {
+            var audits = new List<PropertyAudit>();
+
+            var properties = typeof(PropertiesDetailsMaster).GetProperties();
+
+            foreach (var prop in properties)
+            {
+                // Skip unnecessary fields
+                if (prop.Name == "CreatedAt" ||
+                    prop.Name == "CreatedBy" ||
+                    prop.Name == "UpdatedAt" ||
+                    prop.Name == "UpdatedBy")
+                    continue;
+
+                var oldValue = prop.GetValue(oldData)?.ToString();
+                var newValue = prop.GetValue(newData)?.ToString();
+
+                if (oldValue != newValue)
+                {
+                    audits.Add(new PropertyAudit
+                    {
+                        PropertyAuditId = Guid.NewGuid(),
+                        PropertyId = newData.PropertiesDetailsId,
+                        FieldName = FormatFieldName(prop.Name),
+                        OldValue = oldValue,
+                        NewValue = newValue,
+                        ActionType = "Update",
+                        ModifiedBy = userId,
+                        ModifiedOn = DateTime.UtcNow
+                    });
+                }
+            }
+
+            return audits;
+        }
+
+        private string FormatFieldName(string name)
+        {
+            return System.Text.RegularExpressions.Regex
+                .Replace(name, "([a-z])([A-Z])", "$1 $2");
         }
     }
 }

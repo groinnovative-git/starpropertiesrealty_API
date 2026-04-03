@@ -150,5 +150,16 @@ namespace Star_Properties.BAL.Service.AuthBAL
             var result = await _repo.GetUserCrediential();
             return result;
         }
+
+        public async Task TrackVisitor(string ip, string userAgent)
+        {
+            await _repo.TrackVisitor(ip, userAgent);
+        }
+
+        public async Task<VisitorDashboardResponse> GetVisitorDashboard()
+        {
+            return await _repo.GetVisitorDashboard();
+        }
+
     }
 }

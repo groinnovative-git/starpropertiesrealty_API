@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Star_Properties.DbConfiguration;
 using Star_Properties.Model.EntityModel;
+using Star_Properties.Model.ResponseModel;
 using Star_Properties.Repository.Interface.IAuthRepository;
 using System;
 
@@ -64,6 +65,52 @@ namespace Star_Properties.Repository.Service.AuthRepository
             return await _context.UserMaster
                 .Where(x => x.IsActive)
                 .ToListAsync();
+        }
+
+        public async Task TrackVisitor(string ip, string userAgent)
+        {
+            var today = DateTime.UtcNow.Date;
+
+            // ✅ Avoid duplicate visitor (same IP same day)
+            var exists = await _context.VisitorTracking
+                .AnyAsync(x => x.IpAddress == ip && x.VisitedOn.Date == today);
+
+            if (!exists)
+            {
+                var visitor = new VisitorTracking
+                {
+                    VisitorId = Guid.NewGuid(),
+                    IpAddress = ip,
+                    UserAgent = userAgent,
+                    VisitedOn = DateTime.UtcNow
+                };
+
+                _context.VisitorTracking.Add(visitor);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<VisitorDashboardResponse> GetVisitorDashboard()
+        {
+            var today = DateTime.UtcNow.Date;
+
+            var total = await _context.VisitorTracking.CountAsync();
+
+            var todayCount = await _context.VisitorTracking
+                .Where(x => x.VisitedOn.Date == today)
+                .CountAsync();
+
+            var monthlyCount = await _context.VisitorTracking
+                .Where(x => x.VisitedOn.Month == today.Month &&
+                            x.VisitedOn.Year == today.Year)
+                .CountAsync();
+
+            return new VisitorDashboardResponse
+            {
+                TotalVisitors = total,
+                TodayVisitors = todayCount,
+                MonthlyVisitors = monthlyCount
+            };
         }
     }
 }

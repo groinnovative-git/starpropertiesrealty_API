@@ -63,5 +63,21 @@ namespace Star_Properties.Controllers.Admin.CustomerController
             var response = await _bal.GetContactAuditDetails(contactId);
             return Ok(response);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> MarkAsReadBulk([FromBody] MarkNotificationReadRequest request)
+        {
+            var userId = GetUserIdFromToken();
+            await _bal.MarkAsReadBulk(request.NotificationIds, userId);
+            return Ok("Updated");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUnreadCount()
+        {
+            var userId = GetUserIdFromToken();
+            var count = await _bal.GetUnreadCount(userId);
+            return Ok(count);
+        }
     }
 }

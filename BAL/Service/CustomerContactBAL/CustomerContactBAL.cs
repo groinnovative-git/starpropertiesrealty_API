@@ -38,5 +38,25 @@ namespace Star_Properties.BAL.Service.CustomerContactBAL
         {
             return await _repo.GetContactAuditDetails(contactId);
         }
+
+        public async Task CreateNotification(string title, string message)
+        {
+            await _repo.CreateNotification(title, message);
+        }
+
+        public async Task<List<NotificationResponse>> GetNotifications(Guid userId)
+        {
+            return await _repo.GetNotifications(userId);
+        }
+
+        public async Task MarkAsReadBulk(List<Guid> notificationIds, Guid userId)
+        {
+            await _repo.MarkAsReadBulk(notificationIds, userId);
+        }
+
+        public async Task<int> GetUnreadCount(Guid userId)
+        {
+            return await _repo.GetUnreadCount(userId);
+        }
     }
 }

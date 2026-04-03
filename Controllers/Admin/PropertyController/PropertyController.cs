@@ -40,7 +40,6 @@ namespace Star_Properties.Controllers.Admin.PropertyController
             }
         }
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPost]
         public async Task<IActionResult> AddProperty([FromForm]PropertyRequest req)
         {
@@ -48,7 +47,6 @@ namespace Star_Properties.Controllers.Admin.PropertyController
             return Ok(new { PropertyId = id });
         }
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpPut]
         public async Task<IActionResult> UpdateProperty([FromForm]PropertyRequest req)
         {
@@ -70,7 +68,6 @@ namespace Star_Properties.Controllers.Admin.PropertyController
             return Ok(result);
         }
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
         [HttpDelete]
         public async Task<IActionResult> DeleteProperty(Guid propertyId)
         {

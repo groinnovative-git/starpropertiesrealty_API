@@ -1,4 +1,5 @@
 ﻿using Star_Properties.Model.EntityModel;
+using Star_Properties.Model.ResponseModel;
 
 namespace Star_Properties.Repository.Interface.IAuthRepository
 {
@@ -11,5 +12,7 @@ namespace Star_Properties.Repository.Interface.IAuthRepository
         Task UpdateUserCrediential(UserMaster user);
         Task<string> DeleteUserCrediential(Guid deleteUserId, Guid modifiedBy);
         Task<List<UserMaster>> GetUserCrediential();
+        Task TrackVisitor(string ip, string userAgent);
+        Task<VisitorDashboardResponse> GetVisitorDashboard();
     }
 }
