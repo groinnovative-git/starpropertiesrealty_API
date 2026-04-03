@@ -177,28 +177,16 @@ namespace Star_Properties.Repository.Service.CustomerContactRepository
                     user => user.UserId,
                     (audit, user) => new CustomerContactAuditResponse
                     {
-                        Description =
-                            audit.FieldName + " changed from '" + audit.OldValue + "' to '" + audit.NewValue +
-                            "' by " + user.Username +
+                        Description = audit.FieldName + " changed from '" + audit.OldValue + "' to '" + audit.NewValue +
+                            "' by " + user.Name +
                             " on " + audit.ModifiedOn.ToString("dd-MMM-yyyy hh:mm tt"),
+
+                        Name = user.Name,
 
                         ModifiedOn = audit.ModifiedOn
                     }
                 )
                 .ToListAsync();
-            //var auditList = _context.CustomerContactAudit
-            //    .Where(x => x.ContactId == customerData.ContactId)
-            //    .OrderByDescending(x => x.ModifiedOn)
-            //    .Select(x => new CustomerContactAuditResponse
-            //    {
-            //        Description =
-            //            x.FieldName + " changed from '" + x.OldValue + "' to '" + x.NewValue +
-            //            "' by " + x.ModifiedBy +
-            //            " on " + x.ModifiedOn.ToString("dd-MMM-yyyy hh:mm tt"),
-
-            //        ModifiedOn = x.ModifiedOn
-            //    })
-            //    .ToList();
 
             return new CustomerContactUpdateResponse
             {

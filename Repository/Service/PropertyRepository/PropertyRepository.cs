@@ -532,6 +532,56 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             return properties;
         }
 
+        public async Task<PropertyDashboardResponse> GetPropertyDashboard(PropertyGraphRequest request)
+        {
+            // ✅ If year not provided → use current year
+            int year = request.Year ?? DateTime.UtcNow.Year;
+
+            var list = await _context.PropertiesDetailsMaster
+                .Where(p => p.IsActive && p.CreatedAt.Year == year)
+                .ToListAsync();
+
+            // ✅ GROUP MONTH-WISE
+            var grouped = list
+                .Where(p => p.CreatedAt != default && p.CreatedAt.Month >= 1 && p.CreatedAt.Month <= 12)
+                .GroupBy(p => p.CreatedAt.Month)
+                .Select(g => new PropertyGraphResponse
+                {
+                    Month = g.Key,
+                    MonthName = new DateTime(year, g.Key, 1).ToString("MMM"),
+
+                    ActiveCount = g.Count(x => x.PropertyStatus == "Active"),
+                    SoldOutCount = g.Count(x => x.PropertyStatus == "Sold")
+                })
+                .ToList();
+
+            // ✅ ALWAYS return all 12 months
+            var graphData = Enumerable.Range(1, 12)
+                .Select(m => grouped.FirstOrDefault(x => x.Month == m) ??
+                    new PropertyGraphResponse
+                    {
+                        Month = m,
+                        MonthName = new DateTime(year, m, 1).ToString("MMM"),
+                        ActiveCount = 0,
+                        SoldOutCount = 0
+                    })
+                .ToList();
+
+            // ✅ SUMMARY
+            var summary = new PropertySummaryResponse
+            {
+                TotalActive = list.Count(x => x.PropertyStatus == "Active"),
+                TotalSoldOut = list.Count(x => x.PropertyStatus == "Sold")
+            };
+
+            return new PropertyDashboardResponse
+            {
+                Year = year,
+                GraphData = graphData,
+                Summary = summary
+            };
+        }
+
         // ==========================
         // SAVE IMAGES
         // ==========================

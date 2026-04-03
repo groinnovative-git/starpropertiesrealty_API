@@ -11,5 +11,6 @@ namespace Star_Properties.Repository.Interface.IPropertyRepository
         Task<List<PropertyResponse>> GetAllPropertiesAsync();
         Task<PropertyResponse> GetPropertyByIdAsync(Guid propertyId);
         Task<List<ActiveSoldOutPropertyResponse>> GetActiveAndSoldOutProperties();
+        Task<PropertyDashboardResponse> GetPropertyDashboard(PropertyGraphRequest request);
     }
 }

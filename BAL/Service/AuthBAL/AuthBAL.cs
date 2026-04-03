@@ -89,7 +89,10 @@ namespace Star_Properties.BAL.Service.AuthBAL
         public async Task<string> CreateUserCrediential(CreateUserRequest request,Guid userId)
         {
             var existingEmailUser = await _repo.GetUserByEmail(request.Email);
+            var existingUsername = await _repo.GetUserByUsername(request.Username);
 
+            if (existingUsername != null)
+                throw new Exception("User already exists");
             if (existingEmailUser != null)
                 throw new Exception("User already exists");
 
@@ -114,9 +117,13 @@ namespace Star_Properties.BAL.Service.AuthBAL
         public async Task<string> UpdateUserCrediential(UpdateUserRequest request, Guid userId)
         {
             var user = await _repo.GetUserByUserId(request.UserId);
+            var username = await _repo.GetUserByUsername(request.Username);
 
             if (user == null)
                 throw new Exception("User not found");
+
+            if (username != null)
+                throw new Exception("User already exists");
 
             var requestedUsername = request.Username?.Trim();
             var requestedEmail = request.Email?.Trim();

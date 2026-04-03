@@ -95,5 +95,16 @@ namespace Star_Properties.BAL.Service.PropertyBAL
             }
         }
 
+        public async Task<PropertyDashboardResponse> GetPropertyDashboard(PropertyGraphRequest request)
+        {
+            try
+            {
+                return await _repo.GetPropertyDashboard(request);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

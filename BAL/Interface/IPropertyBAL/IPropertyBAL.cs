@@ -11,5 +11,7 @@ namespace Star_Properties.BAL.Interface.IPropertyBAL
         Task<List<PropertyResponse>> GetAllProperties();
         Task<PropertyResponse> GetPropertiesById(Guid propertyId);
         Task<List<ActiveSoldOutPropertyResponse>> GetActiveAndSoldOutProperties();
+        Task<PropertyDashboardResponse> GetPropertyDashboard(PropertyGraphRequest request);
+        
     }
 }

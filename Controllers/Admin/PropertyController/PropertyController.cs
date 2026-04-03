@@ -78,10 +78,10 @@ namespace Star_Properties.Controllers.Admin.PropertyController
             return Ok("Deleted successfully");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetActiveAndSoldOutProperties()
+        [HttpPost]
+        public async Task<IActionResult> GetPropertyDashboard([FromBody] PropertyGraphRequest request)
         {
-            var result = await _bal.GetActiveAndSoldOutProperties();
+            var result = await _bal.GetPropertyDashboard(request);
             return Ok(result);
         }
     }
