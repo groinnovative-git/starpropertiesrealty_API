@@ -106,5 +106,17 @@ namespace Star_Properties.BAL.Service.PropertyBAL
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<DashboardSummaryResponse> GeCountsandDistributionByProperties()
+        {
+            try
+            {
+                return await _repo.GeCountsandDistributionByProperties();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

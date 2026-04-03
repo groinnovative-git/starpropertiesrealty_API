@@ -92,9 +92,11 @@ namespace Star_Properties.BAL.Service.AuthBAL
             var existingUsername = await _repo.GetUserByUsername(request.Username);
 
             if (existingUsername != null)
-                throw new Exception("User already exists");
+                throw new Exception("Username already exists");
             if (existingEmailUser != null)
-                throw new Exception("User already exists");
+                throw new Exception("Email already exists");
+            if(existingUsername != null && existingEmailUser != null)
+                throw new Exception("Username and Email already exist");
 
             var user = new UserMaster
             {

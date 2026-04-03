@@ -534,14 +534,14 @@ namespace Star_Properties.Repository.Service.PropertyRepository
 
         public async Task<PropertyDashboardResponse> GetPropertyDashboard(PropertyGraphRequest request)
         {
-            // ✅ If year not provided → use current year
+            // If year not provided use current year
             int year = request.Year ?? DateTime.UtcNow.Year;
 
             var list = await _context.PropertiesDetailsMaster
                 .Where(p => p.IsActive && p.CreatedAt.Year == year)
                 .ToListAsync();
 
-            // ✅ GROUP MONTH-WISE
+            // GROUP MONTH-WISE
             var grouped = list
                 .Where(p => p.CreatedAt != default && p.CreatedAt.Month >= 1 && p.CreatedAt.Month <= 12)
                 .GroupBy(p => p.CreatedAt.Month)
@@ -555,7 +555,7 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 })
                 .ToList();
 
-            // ✅ ALWAYS return all 12 months
+            // ALWAYS return all 12 months
             var graphData = Enumerable.Range(1, 12)
                 .Select(m => grouped.FirstOrDefault(x => x.Month == m) ??
                     new PropertyGraphResponse
@@ -567,7 +567,7 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                     })
                 .ToList();
 
-            // ✅ SUMMARY
+            // SUMMARY
             var summary = new PropertySummaryResponse
             {
                 TotalActive = list.Count(x => x.PropertyStatus == "Active"),
@@ -579,6 +579,44 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 Year = year,
                 GraphData = graphData,
                 Summary = summary
+            };
+        }
+
+        public async Task<DashboardSummaryResponse> GeCountsandDistributionByProperties()
+        {
+            var properties = await _context.PropertiesDetailsMaster
+                .Where(p => p.IsActive)
+                .ToListAsync();
+
+            var totalProperties = properties.Count;
+
+            var activeCount = properties.Count(p => p.PropertyStatus == "Active");
+            var soldCount = properties.Count(p => p.PropertyStatus == "Sold");
+
+            // Leads 
+            var totalLeads = await _context.CustomerContactMaster.CountAsync();
+
+            // Distribution
+            var distribution = properties
+                .GroupBy(p => p.PropertyType)
+                .Select(g => new PropertyTypeDistribution
+                {
+                    PropertyType = g.Key,
+                    Count = g.Count(),
+                    Percentage = totalProperties > 0
+                        ? Math.Round((decimal)g.Count() * 100 / totalProperties, 2)
+                        : 0
+                })
+                .OrderByDescending(x => x.Count)
+                .ToList();
+
+            return new DashboardSummaryResponse
+            {
+                TotalProperties = totalProperties,
+                ActiveProperties = activeCount,
+                SoldProperties = soldCount,
+                TotalLeads = totalLeads,
+                DistributionByProperties = distribution
             };
         }
 

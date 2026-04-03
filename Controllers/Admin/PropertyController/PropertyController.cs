@@ -84,5 +84,12 @@ namespace Star_Properties.Controllers.Admin.PropertyController
             var result = await _bal.GetPropertyDashboard(request);
             return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GeCountsandDistributionByProperties()
+        {
+            var result = await _bal.GeCountsandDistributionByProperties();
+            return Ok(result);
+        }
     }
 }
