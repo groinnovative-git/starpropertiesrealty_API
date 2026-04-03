@@ -88,13 +88,10 @@ namespace Star_Properties.BAL.Service.AuthBAL
 
         public async Task<string> CreateUserCrediential(CreateUserRequest request,Guid userId)
         {
-            var existingUser = await _repo.GetUserByUsername(request.Username);
             var existingEmailUser = await _repo.GetUserByEmail(request.Email);
 
-            if (existingUser != null)
-                throw new Exception("User already exists");
             if (existingEmailUser != null)
-                throw new Exception("Email already exists");
+                throw new Exception("User already exists");
 
             var user = new UserMaster
             {
@@ -125,52 +122,6 @@ namespace Star_Properties.BAL.Service.AuthBAL
             var requestedEmail = request.Email?.Trim();
             var requestedName = request.Name?.Trim();
             var requestedRole = request.Role?.Trim();
-
-            if (string.IsNullOrWhiteSpace(requestedUsername))
-                throw new Exception("Username is required");
-            if (string.IsNullOrWhiteSpace(requestedEmail))
-                throw new Exception("Email is required");
-            if (string.IsNullOrWhiteSpace(requestedName))
-                throw new Exception("Name is required");
-            if (string.IsNullOrWhiteSpace(request.Password))
-                throw new Exception("Password is required");
-            if (string.IsNullOrWhiteSpace(requestedRole))
-                throw new Exception("Role is required");
-
-            var skippedFields = new List<string>();
-
-            if (!string.Equals(user.Username, requestedUsername, StringComparison.OrdinalIgnoreCase))
-            {
-                var existingUserByUsername = await _repo.GetUserByUsername(requestedUsername);
-                if (existingUserByUsername != null && existingUserByUsername.UserId != request.UserId)
-                {
-                    skippedFields.Add("username");
-                    requestedUsername = user.Username;
-                }
-            }
-
-            if (!string.Equals(user.Email, requestedEmail, StringComparison.OrdinalIgnoreCase))
-            {
-                var existingUserByEmail = await _repo.GetUserByEmail(requestedEmail);
-                if (existingUserByEmail != null && existingUserByEmail.UserId != request.UserId)
-                {
-                    skippedFields.Add("email");
-                    requestedEmail = user.Email;
-                }
-            }
-
-            user.Username = requestedUsername;
-            user.Email = requestedEmail;
-            user.Name = requestedName;
-            user.Password = HashPassword(request.Password);
-            user.Role = requestedRole;
-            user.ModifiedOn = DateTime.UtcNow;
-            user.ModifiedBy = userId;
-
-            await _repo.UpdateUserCrediential(user);
-
-            if (skippedFields.Any())
-                return $"User updated successfully. Skipped duplicate field(s): {string.Join(", ", skippedFields)}";
 
             return "User updated successfully";
         }
