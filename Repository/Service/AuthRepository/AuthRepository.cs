@@ -20,6 +20,11 @@ namespace Star_Properties.Repository.Service.AuthRepository
             return await _context.UserMaster.FirstOrDefaultAsync(x => x.Username == username && x.IsActive);
         }
 
+        public async Task<UserMaster> GetUserByEmail(string email)
+        {
+            return await _context.UserMaster.FirstOrDefaultAsync(x => x.Email == email && x.IsActive);
+        }
+
         public async Task<UserMaster> GetUserByUserId(Guid userId)
         {
             return await _context.UserMaster.FirstOrDefaultAsync(x => x.UserId == userId && x.IsActive);

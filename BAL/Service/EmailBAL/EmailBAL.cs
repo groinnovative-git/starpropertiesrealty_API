@@ -183,10 +183,10 @@ namespace Star_Properties.BAL.Service.EmailBAL
                 // ✅ FIX HERE
                 .Replace("{{userName}}", request.UserName ?? "")
                 .Replace("{{employeeName}}", request.UserName ?? "")
-                .Replace("{{username}}", request.UserName ?? "")
-                .Replace("{{password}}", request.UserName ?? "")
+                .Replace("{{username}}", request.Username ?? "")
+                .Replace("{{password}}", request.Password ?? "")
 
-                .Replace("{{email}}", to ?? "")
+                .Replace("{{email}}", request.Email ?? to ?? "")
                 .Replace("{{role}}", request.Role ?? "")
                 .Replace("{{updatedDateTime}}", DateTime.Now.ToString("dd MMM yyyy hh:mm tt"))
 

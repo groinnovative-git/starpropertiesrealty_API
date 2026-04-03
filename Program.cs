@@ -22,6 +22,8 @@ using Star_Properties.Repository.Service.EmailRepository;
 using Star_Properties.Repository.Service.PropertyRepository;
 using System.Text;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuration Setup
