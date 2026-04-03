@@ -110,5 +110,9 @@
         public DateTime CreatedDate { get; set; }
         public string? PropertyStatus { get; set; }
         public bool IsActive { get; set; }// e.g., Available, Sold, Rented
+        public Guid CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public Guid? UpdatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

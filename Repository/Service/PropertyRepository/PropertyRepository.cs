@@ -490,6 +490,28 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             };
         }
 
+        public async Task<List<ActiveSoldOutPropertyResponse>> GetActiveAndSoldOutProperties()
+        {
+            var properties = await _context.PropertiesDetailsMaster
+                .Where(p => p.IsActive &&
+                       (p.PropertyStatus == "Active" || p.PropertyStatus == "Sold"))
+                .Select(p => new ActiveSoldOutPropertyResponse
+                {
+                    PropertiesDetailsId = p.PropertiesDetailsId,
+                    PropertyTitle = p.PropertyTitle,
+                    Price = p.Price ?? 0,
+                    PropertyType = p.PropertyType,
+                    PropertyStatus = p.PropertyStatus,
+                    Location = p.Location,
+                    IsActive = p.IsActive,
+                    CreatedBy = p.CreatedBy ?? Guid.Empty,
+                    CreatedAt = p.CreatedAt,
+                })
+                .ToListAsync();
+
+            return properties;
+        }
+
         // ==========================
         // SAVE IMAGES
         // ==========================

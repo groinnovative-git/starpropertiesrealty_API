@@ -10,5 +10,6 @@ namespace Star_Properties.BAL.Interface.IPropertyBAL
         Task DeleteProperty(Guid propertyId);
         Task<List<PropertyResponse>> GetAllProperties();
         Task<PropertyResponse> GetPropertiesById(Guid propertyId);
+        Task<List<ActiveSoldOutPropertyResponse>> GetActiveAndSoldOutProperties();
     }
 }

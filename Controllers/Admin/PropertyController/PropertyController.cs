@@ -77,5 +77,12 @@ namespace Star_Properties.Controllers.Admin.PropertyController
             await _bal.DeleteProperty(propertyId);
             return Ok("Deleted successfully");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetActiveAndSoldOutProperties()
+        {
+            var result = await _bal.GetActiveAndSoldOutProperties();
+            return Ok(result);
+        }
     }
 }

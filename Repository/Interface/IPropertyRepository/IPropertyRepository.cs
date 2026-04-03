@@ -10,5 +10,6 @@ namespace Star_Properties.Repository.Interface.IPropertyRepository
         Task DeleteProperty(Guid propertyId);
         Task<List<PropertyResponse>> GetAllPropertiesAsync();
         Task<PropertyResponse> GetPropertyByIdAsync(Guid propertyId);
+        Task<List<ActiveSoldOutPropertyResponse>> GetActiveAndSoldOutProperties();
     }
 }

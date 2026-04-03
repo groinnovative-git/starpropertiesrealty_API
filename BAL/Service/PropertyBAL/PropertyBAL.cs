@@ -82,5 +82,18 @@ namespace Star_Properties.BAL.Service.PropertyBAL
             }
         }
 
+        public async Task<List<ActiveSoldOutPropertyResponse>> GetActiveAndSoldOutProperties()
+        {
+            try 
+            {                
+                var result = await _repo.GetActiveAndSoldOutProperties();
+                return result;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
     }
 }
