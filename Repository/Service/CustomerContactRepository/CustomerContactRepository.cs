@@ -211,19 +211,27 @@ namespace Star_Properties.Repository.Service.CustomerContactRepository
 
         public async Task<List<CustomerContactAuditResponse>> GetContactAuditDetails(Guid contactId)
         {
-            return _context.CustomerContactAudit
+            var auditList = await _context.CustomerContactAudit
                 .Where(x => x.ContactId == contactId)
                 .OrderByDescending(x => x.ModifiedOn)
-                .Select(x => new CustomerContactAuditResponse
-                {
-                    Description =
-                        x.FieldName + " changed from '" + x.OldValue + "' to '" + x.NewValue +
-                        "' by " + x.ModifiedBy +
-                        " on " + x.ModifiedOn.ToString("dd-MMM-yyyy hh:mm tt"),
+                .Join(
+                    _context.UserMaster,
+                    audit => audit.ModifiedBy,
+                    user => user.UserId,
+                    (audit, user) => new CustomerContactAuditResponse
+                    {
+                        Description = audit.FieldName + " changed from '" + audit.OldValue + "' to '" + audit.NewValue +
+                                      "' by " + user.Name +
+                                      " on " + audit.ModifiedOn.ToString("dd-MMM-yyyy hh:mm tt"),
 
-                    ModifiedOn = x.ModifiedOn
-                })
-                .ToList();
+                        Name = user.Name,  
+
+                        ModifiedOn = audit.ModifiedOn
+                    }
+                )
+                .ToListAsync();
+
+            return auditList;
         }
     }
 }
