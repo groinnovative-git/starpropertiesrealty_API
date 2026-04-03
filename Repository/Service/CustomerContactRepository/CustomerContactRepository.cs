@@ -3,6 +3,7 @@ using Star_Properties.Model.EntityModel;
 using Star_Properties.Model.RequestModel;
 using Star_Properties.Model.ResponseModel;
 using Star_Properties.Repository.Interface.ICustomerContactRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace Star_Properties.Repository.Service.CustomerContactRepository
 {
@@ -167,19 +168,37 @@ namespace Star_Properties.Repository.Service.CustomerContactRepository
             await _context.SaveChangesAsync();
 
             // FETCH UPDATED AUDIT LIST
-            var auditList = _context.CustomerContactAudit
+            var auditList = await _context.CustomerContactAudit
                 .Where(x => x.ContactId == customerData.ContactId)
                 .OrderByDescending(x => x.ModifiedOn)
-                .Select(x => new CustomerContactAuditResponse
-                {
-                    Description =
-                        x.FieldName + " changed from '" + x.OldValue + "' to '" + x.NewValue +
-                        "' by " + x.ModifiedBy +
-                        " on " + x.ModifiedOn.ToString("dd-MMM-yyyy hh:mm tt"),
+                .Join(
+                    _context.UserMaster,
+                    audit => audit.ModifiedBy,
+                    user => user.UserId,
+                    (audit, user) => new CustomerContactAuditResponse
+                    {
+                        Description =
+                            audit.FieldName + " changed from '" + audit.OldValue + "' to '" + audit.NewValue +
+                            "' by " + user.Username +
+                            " on " + audit.ModifiedOn.ToString("dd-MMM-yyyy hh:mm tt"),
 
-                    ModifiedOn = x.ModifiedOn
-                })
-                .ToList();
+                        ModifiedOn = audit.ModifiedOn
+                    }
+                )
+                .ToListAsync();
+            //var auditList = _context.CustomerContactAudit
+            //    .Where(x => x.ContactId == customerData.ContactId)
+            //    .OrderByDescending(x => x.ModifiedOn)
+            //    .Select(x => new CustomerContactAuditResponse
+            //    {
+            //        Description =
+            //            x.FieldName + " changed from '" + x.OldValue + "' to '" + x.NewValue +
+            //            "' by " + x.ModifiedBy +
+            //            " on " + x.ModifiedOn.ToString("dd-MMM-yyyy hh:mm tt"),
+
+            //        ModifiedOn = x.ModifiedOn
+            //    })
+            //    .ToList();
 
             return new CustomerContactUpdateResponse
             {
