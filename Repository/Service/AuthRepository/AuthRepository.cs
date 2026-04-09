@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Star_Properties.DbConfiguration;
 using Star_Properties.Model.EntityModel;
 using Star_Properties.Model.ResponseModel;
 using Star_Properties.Repository.Interface.IAuthRepository;
 using System;
+using System.Text;
 
 namespace Star_Properties.Repository.Service.AuthRepository
 {
@@ -45,7 +47,7 @@ namespace Star_Properties.Repository.Service.AuthRepository
             if (user == null)
                 throw new Exception("User not found");
 
-            user.Password = password; 
+            user.Password = HashPassword(password); 
             user.ModifiedBy = modifiedBy;
             user.ModifiedOn = DateTime.UtcNow;
 
@@ -121,6 +123,15 @@ namespace Star_Properties.Repository.Service.AuthRepository
                 TodayVisitors = todayCount,
                 MonthlyVisitors = monthlyCount
             };
+        }
+
+        private string HashPassword(string password)
+        {
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(bytes).Replace("-", "").ToLower();
+            }
         }
     }
 }

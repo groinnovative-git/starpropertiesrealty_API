@@ -106,11 +106,30 @@
         public string? SchoolDistance { get; set; }
         public string? BusStandDistance { get; set; }
         public bool? IsRental { get; set; }
+        // PG AMENITIES
+        public bool? HasFoodIncluded { get; set; }
+        public bool? HasWashingMachine { get; set; }
+        public bool? HasHousekeeping { get; set; }
+        public bool? HasBed { get; set; }
+        public bool? HasCupboard { get; set; }
+        public bool? HasTable { get; set; }
+        public bool? HasChair { get; set; }
+        public bool? HasAC { get; set; }
+        public bool? HasTV { get; set; }
+        public bool? HasGeyser { get; set; }
+        public bool? HasSecurityGuard { get; set; }
+        public bool? HasSharedKitchen { get; set; }
+        public bool? IsCookingAllowed { get; set; }
+        public string? Img1 { get; set; }
+        public string? Img2 { get; set; }
+        public string? Img3 { get; set; }
+        public string? Img4 { get; set; }
+        public string? Img5 { get; set; }
 
         // MEDIA
         public List<string> ImageUrls { get; set; }
-        public string VideoUrl1 { get; set; }
-        public string VideoUrl2 { get; set; }
+        public string? VideoUrl1 { get; set; }
+        public string? VideoUrl2 { get; set; }
 
         // DETAILS
         public string Description { get; set; }

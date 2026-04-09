@@ -5,7 +5,7 @@ namespace Star_Properties.BAL.Interface.IPropertyBAL
 {
     public interface IPropertyBAL
     {
-        Task<Guid> AddProperty(PropertyRequest req, Guid userId);
+        Task<(Guid, string)> AddProperty(PropertyRequest req, Guid userId);
         Task UpdateProperty(PropertyRequest req, Guid userId);
         Task DeleteProperty(Guid propertyId);
         Task<List<PropertyResponse>> GetAllProperties();

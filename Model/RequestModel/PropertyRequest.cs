@@ -108,6 +108,20 @@ namespace Star_Properties.Model.RequestModel
         public string? SchoolDistance { get; set; }
         public string? BusStandDistance { get; set; }
         public bool? IsRental { get; set; }
+        // PG AMENITIES
+        public bool HasFoodIncluded { get; set; }
+        public bool HasWashingMachine { get; set; }
+        public bool HasHousekeeping { get; set; }
+        public bool HasBed { get; set; }
+        public bool HasCupboard { get; set; }
+        public bool HasTable { get; set; }
+        public bool HasChair { get; set; }
+        public bool HasAC { get; set; }
+        public bool HasTV { get; set; }
+        public bool HasGeyser { get; set; }
+        public bool HasSecurityGuard { get; set; }
+        public bool HasSharedKitchen { get; set; }
+        public bool IsCookingAllowed { get; set; }
         // MEDIA
         public string? ImageUrls { get; set; }  // existing image URLs (semicolon-separated) sent during update
 

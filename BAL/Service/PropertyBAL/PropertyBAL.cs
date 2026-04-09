@@ -14,7 +14,7 @@ namespace Star_Properties.BAL.Service.PropertyBAL
             _repo = repo;
         }
 
-        public Task<Guid> AddProperty(PropertyRequest req, Guid userId)
+        public Task<(Guid, string)> AddProperty(PropertyRequest req, Guid userId)
         {
             try
             {

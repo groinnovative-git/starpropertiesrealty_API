@@ -19,7 +19,7 @@ namespace Star_Properties.Repository.Service.PropertyRepository
         // ==========================
         // ADD PROPERTY
         // ==========================
-        public async Task<Guid> AddProperty(PropertyRequest req, Guid userId)
+        public async Task<(Guid, string)> AddProperty(PropertyRequest req, Guid userId)
         {
 
             var uploadedImages = await SaveImagesAsync(req.Images);
@@ -130,6 +130,20 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 SchoolDistance = req.SchoolDistance,
                 BusStandDistance = req.BusStandDistance,
                 IsRental = req.IsRental,
+                // PG AMENITIES
+                HasFoodIncluded = req.HasFoodIncluded,
+                HasWashingMachine = req.HasWashingMachine,
+                HasHousekeeping = req.HasHousekeeping,
+                HasBed = req.HasBed,
+                HasCupboard = req.HasCupboard,
+                HasTable = req.HasTable,
+                HasChair = req.HasChair,
+                HasAC = req.HasAC,
+                HasTV = req.HasTV,
+                HasGeyser = req.HasGeyser,
+                HasSecurityGuard = req.HasSecurityGuard,
+                HasSharedKitchen = req.HasSharedKitchen,
+                IsCookingAllowed = req.IsCookingAllowed,
 
                 // Save images as semi-colon separated string
                 //ImageUrls = imageUrls.Any() ? string.Join(";", imageUrls) : "",
@@ -151,22 +165,22 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             _context.PropertiesDetailsMaster.Add(property);
             await _context.SaveChangesAsync();
 
-            var audit = new PropertyAudit
-            {
-                PropertyAuditId = Guid.NewGuid(),
-                PropertyId = property.PropertiesDetailsId,
-                FieldName = "Property",
-                OldValue = null,
-                NewValue = "Property Created",
-                ActionType = "Add",
-                ModifiedBy = userId,
-                ModifiedOn = DateTime.UtcNow
-            };
+            //var audit = new PropertyAudit
+            //{
+            //    PropertyAuditId = Guid.NewGuid(),
+            //    PropertyId = property.PropertiesDetailsId,
+            //    FieldName = "Property",
+            //    OldValue = null,
+            //    NewValue = "Property Created",
+            //    ActionType = "Add",
+            //    ModifiedBy = userId,
+            //    ModifiedOn = DateTime.UtcNow
+            //};
 
-            _context.PropertyAudit.Add(audit);
+            //_context.PropertyAudit.Add(audit);
             await _context.SaveChangesAsync();
 
-            return property.PropertiesDetailsId;
+            return (property.PropertiesDetailsId, "Property Created Successfully");
         }
 
         // ==========================
@@ -292,6 +306,20 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.SchoolDistance = req.SchoolDistance;
             property.BusStandDistance = req.BusStandDistance;
             property.IsRental = req.IsRental;
+            // PG AMENITIES
+            property.HasFoodIncluded = req.HasFoodIncluded;
+            property.HasWashingMachine = req.HasWashingMachine;
+            property.HasHousekeeping = req.HasHousekeeping;
+            property.HasBed = req.HasBed;
+            property.HasCupboard = req.HasCupboard;
+            property.HasTable = req.HasTable;
+            property.HasChair = req.HasChair;
+            property.HasAC = req.HasAC;
+            property.HasTV = req.HasTV;
+            property.HasGeyser = req.HasGeyser;
+            property.HasSecurityGuard = req.HasSecurityGuard;
+            property.HasSharedKitchen = req.HasSharedKitchen;
+            property.IsCookingAllowed = req.IsCookingAllowed;
 
             // Save images safely: new uploads > existing URLs from frontend > keep DB value
             //if (imageUrls.Any())
@@ -367,118 +395,140 @@ namespace Star_Properties.Repository.Service.PropertyRepository
         {
             var properties = await _context.PropertiesDetailsMaster.ToListAsync();
 
-            return properties.Select(p => new PropertyResponse
+            //return properties.Select(p => new PropertyResponse
+            return properties.Select(p =>
             {
-                PropertiesDetailsId = p.PropertiesDetailsId,
-                PropertyTitle = p.PropertyTitle,
-                Price = p.Price ?? 0,
-                PropertyType = p.PropertyType,
-                PropertySubType = p.PropertySubType,
-                IsLoanProviding = p.IsLoanProviding,
-                PropertySqFt = p.PropertySqFt,
-                PlotAreaSqYd = p.PlotAreaSqYd,
-                PlotDimensions = p.PlotDimensions,
-                TotalLandArea = p.TotalLandArea,
-                PricePerAcre = p.PricePerAcre,
-                Bedrooms = p.Bedrooms,
-                Bathrooms = p.Bathrooms,
-                NumberOfFloors = p.NumberOfFloors,
-                FloorNumber = p.FloorNumber,
-                FloorDetails = p.FloorDetails,
-                MonthlyMaintenance = p.MonthlyMaintenance,
-                Washrooms = p.Washrooms,
-                CommercialType = p.CommercialType,
-                LandType = p.LandType,
-                GovApprovedCertificate = p.GovApprovedCertificate,
-                FurnishingStatus = p.FurnishingStatus,
-                FacingDirection = p.FacingDirection,
-                AgeOfProperty = p.AgeOfProperty,
-                HasSwimmingPool = p.HasSwimmingPool ?? false,
-                HasGym = p.HasGym ?? false,
-                HasSecurity = p.HasSecurity ?? false,
-                HasParking = p.HasParking ?? false,
-                HasClubHouse = p.HasClubHouse ?? false,
-                HasPowerBackup = p.HasPowerBackup ?? false,
-                HasLift = p.HasLift ?? false,
-                HasGarden = p.HasGarden ?? false,
-                HasKidsPlayArea = p.HasKidsPlayArea ?? false,
-                HasCCTV = p.HasCCTV ?? false,
-                HasIntercom = p.HasIntercom ?? false,
-                HasFireSafety = p.HasFireSafety ?? false,
-                HasWaterSupply24x7 = p.HasWaterSupply24x7 ?? false,
-                HasVisitorParking = p.HasVisitorParking ?? false,
-                HasGatedCommunity = p.HasGatedCommunity ?? false,
-                HasPartyHall = p.HasPartyHall ?? false,
-                HasPark = p.HasPark ?? false,
-                HasWalkingTrack = p.HasWalkingTrack ?? false,
-                HasRainwaterHarvesting = p.HasRainwaterHarvesting ?? false,
-                HasWasteManagement = p.HasWasteManagement ?? false,
-                HasSeniorCitizenArea = p.HasSeniorCitizenArea ?? false,
-                HasTerrace = p.HasTerrace ?? false,
-                HasBalcony = p.HasBalcony ?? false,
-                HasServantRoom = p.HasServantRoom ?? false,
-                HasSolarPower = p.HasSolarPower ?? false,
-                HasEVChargingPoint = p.HasEVChargingPoint ?? false,
-                HasBlackTopRoad = p.HasBlackTopRoad ?? false,
-                HasCornerPlot = p.HasCornerPlot ?? false,
-                HasStreetLights = p.HasStreetLights ?? false,
-                HasDrainageConnection = p.HasDrainageConnection ?? false,
-                HasWaterConnection = p.HasWaterConnection ?? false,
-                HasElectricityConnection = p.HasElectricityConnection ?? false,
-                HasUndergroundSewage = p.HasUndergroundSewage ?? false,
-                HasAvenueTrees = p.HasAvenueTrees ?? false,
-                HasCompoundWall = p.HasCompoundWall ?? false,
-                HasFencing = p.HasFencing ?? false,
-                IsReadyForConstruction = p.IsReadyForConstruction ?? false,
-                HasRoadAccess = p.HasRoadAccess ?? false,
-                HasWaterSource = p.HasWaterSource ?? false,
-                HasBorewell = p.HasBorewell ?? false,
-                HasDripIrrigation = p.HasDripIrrigation ?? false,
-                HasSprinklerSystem = p.HasSprinklerSystem ?? false,
-                HasFarmHouse = p.HasFarmHouse ?? false,
-                HasStorageShed = p.HasStorageShed ?? false,
-                HasCattleShed = p.HasCattleShed ?? false,
-                HasWatchmanRoom = p.HasWatchmanRoom ?? false,
-                HasSolarPump = p.HasSolarPump ?? false,
-                HasTreePlantation = p.HasTreePlantation ?? false,
-                IsOrganicFarmingReady = p.IsOrganicFarmingReady ?? false,
-                HasRiverAccess = p.HasRiverAccess ?? false,
-                HasLakeView = p.HasLakeView ?? false,
-                HasHillView = p.HasHillView ?? false,
-                HasPrivateEntrance = p.HasPrivateEntrance ?? false,
-                HasMunicipalityWaterSupply = p.HasMunicipalityWaterSupply ?? false,
-                HasStoreRoom = p.HasStoreRoom ?? false,
-                HasModularKitchen = p.HasModularKitchen ?? false,
-                HasWiFi = p.HasWiFi ?? false,
-                HasCentralizedAC = p.HasCentralizedAC ?? false,
-                HasReceptionArea = p.HasReceptionArea ?? false,
-                HasConferenceRoom = p.HasConferenceRoom ?? false,
-                HasPantry = p.HasPantry ?? false,
-                HasRestrooms = p.HasRestrooms ?? false,
-                HasServiceLift = p.HasServiceLift ?? false,
-                HasLoadingBay = p.HasLoadingBay ?? false,
-                HasWheelchairAccess = p.HasWheelchairAccess ?? false,
-                HasMaintenanceStaff = p.HasMaintenanceStaff ?? false,
-                HasGeneratorBackup = p.HasGeneratorBackup ?? false,
-                PropertyLoanPercentage = p.PropertyLoanPercentage,
-                HospitalDistance = p.HospitalDistance,
-                CollegeDistance = p.CollegeDistance,
-                SchoolDistance = p.SchoolDistance,
-                BusStandDistance = p.BusStandDistance,
-                IsRental = p.IsRental ?? false,
-                ImageUrls = string.IsNullOrEmpty(p.ImageUrls) ? new List<string>() : p.ImageUrls.Split(';').ToList(),
-                VideoUrl1 = p.VideoUrl1,
-                VideoUrl2 = p.VideoUrl2,
-                Description = p.Description,
-                Location = p.Location,
-                LocationIframe = p.LocationIframe,
-                PropertyStatus = p.PropertyStatus,
-                IsActive = p.IsActive,
-                CreatedBy = _context.UserMaster.FirstOrDefault(u => u.UserId == p.CreatedBy)?.Name ?? "Unknown",
-                CreatedAt = p.CreatedAt,
-                UpdatedBy = _context.UserMaster.FirstOrDefault(u => u.UserId == p.UpdatedBy)?.Name ?? "Unknown",
-                UpdatedAt = p.UpdatedAt
-
+                var imgs = GetImages(p.ImageUrls);
+                return new PropertyResponse
+                {
+                    PropertiesDetailsId = p.PropertiesDetailsId,
+                    PropertyTitle = p.PropertyTitle,
+                    Price = p.Price ?? 0,
+                    PropertyType = p.PropertyType,
+                    PropertySubType = p.PropertySubType,
+                    IsLoanProviding = p.IsLoanProviding,
+                    PropertySqFt = p.PropertySqFt,
+                    PlotAreaSqYd = p.PlotAreaSqYd,
+                    PlotDimensions = p.PlotDimensions,
+                    TotalLandArea = p.TotalLandArea,
+                    PricePerAcre = p.PricePerAcre,
+                    Bedrooms = p.Bedrooms,
+                    Bathrooms = p.Bathrooms,
+                    NumberOfFloors = p.NumberOfFloors,
+                    FloorNumber = p.FloorNumber,
+                    FloorDetails = p.FloorDetails,
+                    MonthlyMaintenance = p.MonthlyMaintenance,
+                    Washrooms = p.Washrooms,
+                    CommercialType = p.CommercialType,
+                    LandType = p.LandType,
+                    GovApprovedCertificate = p.GovApprovedCertificate,
+                    FurnishingStatus = p.FurnishingStatus,
+                    FacingDirection = p.FacingDirection,
+                    AgeOfProperty = p.AgeOfProperty,
+                    HasSwimmingPool = p.HasSwimmingPool ?? false,
+                    HasGym = p.HasGym ?? false,
+                    HasSecurity = p.HasSecurity ?? false,
+                    HasParking = p.HasParking ?? false,
+                    HasClubHouse = p.HasClubHouse ?? false,
+                    HasPowerBackup = p.HasPowerBackup ?? false,
+                    HasLift = p.HasLift ?? false,
+                    HasGarden = p.HasGarden ?? false,
+                    HasKidsPlayArea = p.HasKidsPlayArea ?? false,
+                    HasCCTV = p.HasCCTV ?? false,
+                    HasIntercom = p.HasIntercom ?? false,
+                    HasFireSafety = p.HasFireSafety ?? false,
+                    HasWaterSupply24x7 = p.HasWaterSupply24x7 ?? false,
+                    HasVisitorParking = p.HasVisitorParking ?? false,
+                    HasGatedCommunity = p.HasGatedCommunity ?? false,
+                    HasPartyHall = p.HasPartyHall ?? false,
+                    HasPark = p.HasPark ?? false,
+                    HasWalkingTrack = p.HasWalkingTrack ?? false,
+                    HasRainwaterHarvesting = p.HasRainwaterHarvesting ?? false,
+                    HasWasteManagement = p.HasWasteManagement ?? false,
+                    HasSeniorCitizenArea = p.HasSeniorCitizenArea ?? false,
+                    HasTerrace = p.HasTerrace ?? false,
+                    HasBalcony = p.HasBalcony ?? false,
+                    HasServantRoom = p.HasServantRoom ?? false,
+                    HasSolarPower = p.HasSolarPower ?? false,
+                    HasEVChargingPoint = p.HasEVChargingPoint ?? false,
+                    HasBlackTopRoad = p.HasBlackTopRoad ?? false,
+                    HasCornerPlot = p.HasCornerPlot ?? false,
+                    HasStreetLights = p.HasStreetLights ?? false,
+                    HasDrainageConnection = p.HasDrainageConnection ?? false,
+                    HasWaterConnection = p.HasWaterConnection ?? false,
+                    HasElectricityConnection = p.HasElectricityConnection ?? false,
+                    HasUndergroundSewage = p.HasUndergroundSewage ?? false,
+                    HasAvenueTrees = p.HasAvenueTrees ?? false,
+                    HasCompoundWall = p.HasCompoundWall ?? false,
+                    HasFencing = p.HasFencing ?? false,
+                    IsReadyForConstruction = p.IsReadyForConstruction ?? false,
+                    HasRoadAccess = p.HasRoadAccess ?? false,
+                    HasWaterSource = p.HasWaterSource ?? false,
+                    HasBorewell = p.HasBorewell ?? false,
+                    HasDripIrrigation = p.HasDripIrrigation ?? false,
+                    HasSprinklerSystem = p.HasSprinklerSystem ?? false,
+                    HasFarmHouse = p.HasFarmHouse ?? false,
+                    HasStorageShed = p.HasStorageShed ?? false,
+                    HasCattleShed = p.HasCattleShed ?? false,
+                    HasWatchmanRoom = p.HasWatchmanRoom ?? false,
+                    HasSolarPump = p.HasSolarPump ?? false,
+                    HasTreePlantation = p.HasTreePlantation ?? false,
+                    IsOrganicFarmingReady = p.IsOrganicFarmingReady ?? false,
+                    HasRiverAccess = p.HasRiverAccess ?? false,
+                    HasLakeView = p.HasLakeView ?? false,
+                    HasHillView = p.HasHillView ?? false,
+                    HasPrivateEntrance = p.HasPrivateEntrance ?? false,
+                    HasMunicipalityWaterSupply = p.HasMunicipalityWaterSupply ?? false,
+                    HasStoreRoom = p.HasStoreRoom ?? false,
+                    HasModularKitchen = p.HasModularKitchen ?? false,
+                    HasWiFi = p.HasWiFi ?? false,
+                    HasCentralizedAC = p.HasCentralizedAC ?? false,
+                    HasReceptionArea = p.HasReceptionArea ?? false,
+                    HasConferenceRoom = p.HasConferenceRoom ?? false,
+                    HasPantry = p.HasPantry ?? false,
+                    HasRestrooms = p.HasRestrooms ?? false,
+                    HasServiceLift = p.HasServiceLift ?? false,
+                    HasLoadingBay = p.HasLoadingBay ?? false,
+                    HasWheelchairAccess = p.HasWheelchairAccess ?? false,
+                    HasMaintenanceStaff = p.HasMaintenanceStaff ?? false,
+                    HasGeneratorBackup = p.HasGeneratorBackup ?? false,
+                    PropertyLoanPercentage = p.PropertyLoanPercentage,
+                    HospitalDistance = p.HospitalDistance,
+                    CollegeDistance = p.CollegeDistance,
+                    SchoolDistance = p.SchoolDistance,
+                    BusStandDistance = p.BusStandDistance,
+                    IsRental = p.IsRental ?? false,
+                    HasFoodIncluded = p.HasFoodIncluded ?? false,
+                    HasWashingMachine = p.HasWashingMachine ?? false,
+                    HasHousekeeping = p.HasHousekeeping ?? false,
+                    HasBed = p.HasBed ?? false,
+                    HasCupboard = p.HasCupboard ?? false,
+                    HasTable = p.HasTable ?? false,
+                    HasChair = p.HasChair ?? false,
+                    HasAC = p.HasAC ?? false,
+                    HasTV = p.HasTV ?? false,
+                    HasGeyser = p.HasGeyser ?? false,
+                    HasSecurityGuard = p.HasSecurityGuard ?? false,
+                    HasSharedKitchen = p.HasSharedKitchen ?? false,
+                    IsCookingAllowed = p.IsCookingAllowed ?? false,
+                    //ImageUrls = string.IsNullOrEmpty(p.ImageUrls) ? new List<string>() : p.ImageUrls.Split(';').ToList(),
+                    Img1 = imgs.Item1,
+                    Img2 = imgs.Item2,
+                    Img3 = imgs.Item3,
+                    Img4 = imgs.Item4,
+                    Img5 = imgs.Item5,
+                    VideoUrl1 = p.VideoUrl1,
+                    VideoUrl2 = p.VideoUrl2,
+                    Description = p.Description,
+                    Location = p.Location,
+                    LocationIframe = p.LocationIframe,
+                    PropertyStatus = p.PropertyStatus,
+                    IsActive = p.IsActive,
+                    CreatedBy = _context.UserMaster.FirstOrDefault(u => u.UserId == p.CreatedBy)?.Name ?? "Unknown",
+                    CreatedAt = p.CreatedAt,
+                    UpdatedBy = _context.UserMaster.FirstOrDefault(u => u.UserId == p.UpdatedBy)?.Name ?? "Unknown",
+                    UpdatedAt = p.UpdatedAt
+                };
             }).ToList();
         }
 
@@ -491,6 +541,8 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 .FirstOrDefaultAsync(x => x.PropertiesDetailsId == propertyId);
 
             if (property == null) return null;
+
+            var imgs = GetImages(property.ImageUrls);
 
             return new PropertyResponse
             {
@@ -591,7 +643,25 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 SchoolDistance = property.SchoolDistance,
                 BusStandDistance = property.BusStandDistance,
                 IsRental = property.IsRental ?? false,
-                ImageUrls = string.IsNullOrEmpty(property.ImageUrls) ? new List<string>() : property.ImageUrls.Split(';').ToList(),
+                HasFoodIncluded = property.HasFoodIncluded ?? false,
+                HasWashingMachine = property.HasWashingMachine ?? false,
+                HasHousekeeping = property.HasHousekeeping ?? false,
+                HasBed = property.HasBed ?? false,
+                HasCupboard = property.HasCupboard ?? false,
+                HasTable = property.HasTable ?? false,
+                HasChair = property.HasChair ?? false,
+                HasAC = property.HasAC ?? false,
+                HasTV = property.HasTV ?? false,
+                HasGeyser = property.HasGeyser ?? false,
+                HasSecurityGuard = property.HasSecurityGuard ?? false,
+                HasSharedKitchen = property.HasSharedKitchen ?? false,
+                IsCookingAllowed = property.IsCookingAllowed ?? false,
+                //ImageUrls = string.IsNullOrEmpty(property.ImageUrls) ? new List<string>() : property.ImageUrls.Split(';').ToList(),
+                Img1 = imgs.Item1,
+                Img2 = imgs.Item2,
+                Img3 = imgs.Item3,
+                Img4 = imgs.Item4,
+                Img5 = imgs.Item5,
                 VideoUrl1 = property.VideoUrl1,
                 VideoUrl2 = property.VideoUrl2,
                 Description = property.Description,
@@ -830,6 +900,21 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             }
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .ToList();
+        }
+
+        private (string, string, string, string, string) GetImages(string imageUrls)
+        {
+            var images = string.IsNullOrEmpty(imageUrls)
+                ? new List<string>()
+                : imageUrls.Split(';').ToList();
+
+            return (
+                images.Count > 0 ? images[0] : "",
+                images.Count > 1 ? images[1] : "",
+                images.Count > 2 ? images[2] : "",
+                images.Count > 3 ? images[3] : "",
+                images.Count > 4 ? images[4] : ""
+            );
         }
     }
 }
