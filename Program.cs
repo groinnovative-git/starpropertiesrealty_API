@@ -107,6 +107,9 @@ builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 builder.Services.Configure<SmtpSettings>(
     builder.Configuration.GetSection("SmtpSettings"));
 
+builder.Services.AddSingleton<IEmailQueueBAL, EmailQueueBAL>();
+builder.Services.AddHostedService(provider =>
+    (EmailQueueBAL)provider.GetRequiredService<IEmailQueueBAL>());
 
 
 builder.Services.AddControllers();

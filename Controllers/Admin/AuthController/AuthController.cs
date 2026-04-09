@@ -15,15 +15,18 @@ namespace Star_Properties.Controllers.Admin.AuthController
         private readonly IAuthBAL _authBAL;
         private readonly IEmailBAL _emailBAL;
         private readonly IAuthRepository _authRepository;
+        private readonly IEmailQueueBAL _emailQueueBAL;
 
         public AuthController(
             IAuthBAL authBAL,
             IEmailBAL emailBAL,
-            IAuthRepository authRepository)
+            IAuthRepository authRepository,
+            IEmailQueueBAL emailQueueBAL)
         {
             _authBAL = authBAL;
             _emailBAL = emailBAL;
             _authRepository = authRepository;
+            _emailQueueBAL = emailQueueBAL;
         }
 
         private Guid GetUserIdFromToken()
@@ -87,12 +90,8 @@ namespace Star_Properties.Controllers.Admin.AuthController
                         CreatedDateTime = DateTime.UtcNow
                     };
 
-                    var emailSent = await _emailBAL.SendEmail(emailRequest, HttpContext);
+                    _emailQueueBAL.Enqueue(emailRequest);
 
-                    if (!emailSent)
-                    {
-                        responseMessage = $"{result}. User email notification failed.";
-                    }
                 }
 
                 return Ok(responseMessage);
@@ -132,13 +131,8 @@ namespace Star_Properties.Controllers.Admin.AuthController
                         UpdatedByEmail = updatedByUser?.Email ?? string.Empty,
                         UpdatedDateTime = DateTime.UtcNow
                     };
+                    _emailQueueBAL.Enqueue(emailRequest);
 
-                    var emailSent = await _emailBAL.SendEmail(emailRequest, HttpContext);
-
-                    if (!emailSent)
-                    {
-                        responseMessage = $"{result}. User update email notification failed.";
-                    }
                 }
 
                 return Ok(responseMessage);

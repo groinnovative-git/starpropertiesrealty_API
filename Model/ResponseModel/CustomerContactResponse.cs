@@ -8,7 +8,7 @@
         public string PhoneNumber { get; set; }
         public string CustomerInterest { get; set; }
         public string Message { get; set; }
-        public Guid? PropertyId { get; set; }
+        public string? PropertyTitle{ get; set; }
         public DateTime SubmittedDate { get; set; }
         public string LeadStatus { get; set; } 
         public Guid? ModifiedBy { get; set; }

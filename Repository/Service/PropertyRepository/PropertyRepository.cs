@@ -120,6 +120,12 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 HasWheelchairAccess = req.HasWheelchairAccess,
                 HasMaintenanceStaff = req.HasMaintenanceStaff,
                 HasGeneratorBackup = req.HasGeneratorBackup,
+                PropertyLoanPercentage = req.PropertyLoanPercentage,
+                HospitalDistance = req.HospitalDistance,
+                CollegeDistance = req.CollegeDistance,
+                SchoolDistance = req.SchoolDistance,
+                BusStandDistance = req.BusStandDistance,
+                IsRental = req.IsRental,
 
                 // Save images as semi-colon separated string
                 ImageUrls = imageUrls.Any() ? string.Join(";", imageUrls) : "",
@@ -270,6 +276,12 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.HasWheelchairAccess = req.HasWheelchairAccess;
             property.HasMaintenanceStaff = req.HasMaintenanceStaff;
             property.HasGeneratorBackup = req.HasGeneratorBackup;
+            property.PropertyLoanPercentage = req.PropertyLoanPercentage;
+            property.HospitalDistance = req.HospitalDistance;
+            property.CollegeDistance = req.CollegeDistance;
+            property.SchoolDistance = req.SchoolDistance;
+            property.BusStandDistance = req.BusStandDistance;
+            property.IsRental = req.IsRental;
 
             // Save images safely: new uploads > existing URLs from frontend > keep DB value
             if (imageUrls.Any())
@@ -426,6 +438,12 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 HasWheelchairAccess = p.HasWheelchairAccess ?? false,
                 HasMaintenanceStaff = p.HasMaintenanceStaff ?? false,
                 HasGeneratorBackup = p.HasGeneratorBackup ?? false,
+                PropertyLoanPercentage = p.PropertyLoanPercentage,
+                HospitalDistance = p.HospitalDistance,
+                CollegeDistance = p.CollegeDistance,
+                SchoolDistance = p.SchoolDistance,
+                BusStandDistance = p.BusStandDistance,
+                IsRental = p.IsRental ?? false,
                 ImageUrls = string.IsNullOrEmpty(p.ImageUrls) ? new List<string>() : p.ImageUrls.Split(';').ToList(),
                 VideoUrl1 = p.VideoUrl1,
                 VideoUrl2 = p.VideoUrl2,
@@ -541,14 +559,20 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 HasWheelchairAccess = property.HasWheelchairAccess ?? false,
                 HasMaintenanceStaff = property.HasMaintenanceStaff ?? false,
                 HasGeneratorBackup = property.HasGeneratorBackup ?? false,
+                PropertyLoanPercentage = property.PropertyLoanPercentage,
+                HospitalDistance = property.HospitalDistance,
+                CollegeDistance = property.CollegeDistance,
+                SchoolDistance = property.SchoolDistance,
+                BusStandDistance = property.BusStandDistance,
+                IsRental = property.IsRental ?? false,
                 ImageUrls = string.IsNullOrEmpty(property.ImageUrls) ? new List<string>() : property.ImageUrls.Split(';').ToList(),
                 VideoUrl1 = property.VideoUrl1,
                 VideoUrl2 = property.VideoUrl2,
                 Description = property.Description,
                 Location = property.Location,
-                 LocationIframe = property.LocationIframe,
+                LocationIframe = property.LocationIframe,
                 PropertyStatus = property.PropertyStatus,
-               IsActive = property.IsActive,
+                IsActive = property.IsActive,
 
             };
         }

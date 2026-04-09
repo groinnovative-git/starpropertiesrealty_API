@@ -37,10 +37,20 @@ namespace Star_Properties.Repository.Service.AuthRepository
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateUserCrediential(UserMaster user)
+        public async Task<bool> UpdateUserCrediential(Guid userId, string password, Guid modifiedBy)
         {
-            _context.UserMaster.Update(user);
+            var user = await _context.UserMaster
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.IsActive);
+
+            if (user == null)
+                throw new Exception("User not found");
+
+            user.Password = password; 
+            user.ModifiedBy = modifiedBy;
+            user.ModifiedOn = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<string> DeleteUserCrediential(Guid deleteUserId, Guid modifiedBy)

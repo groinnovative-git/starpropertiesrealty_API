@@ -105,6 +105,12 @@ namespace Star_Properties.Model.EntityModel
         public bool? HasWheelchairAccess { get; set; }
         public bool? HasMaintenanceStaff { get; set; }
         public bool? HasGeneratorBackup { get; set; }
+        public decimal? PropertyLoanPercentage { get; set; }
+        public string? HospitalDistance { get; set; }
+        public string? CollegeDistance { get; set; }
+        public string? SchoolDistance { get; set; }
+        public string? BusStandDistance { get; set; }
+        public bool? IsRental { get; set; }
 
         // MEDIA
         //public List<string>? ImageUrls { get; set; }

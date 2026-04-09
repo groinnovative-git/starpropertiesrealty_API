@@ -9,7 +9,7 @@ namespace Star_Properties.Repository.Interface.IAuthRepository
         Task<UserMaster> GetUserByEmail(string email);
         Task<UserMaster> GetUserByUserId(Guid userId);
         Task CreateUserCrediential(UserMaster user);
-        Task UpdateUserCrediential(UserMaster user);
+        Task<bool> UpdateUserCrediential(Guid userId, string password, Guid modifiedBy);
         Task<string> DeleteUserCrediential(Guid deleteUserId, Guid modifiedBy);
         Task<List<UserMaster>> GetUserCrediential();
         Task TrackVisitor(string ip, string userAgent);

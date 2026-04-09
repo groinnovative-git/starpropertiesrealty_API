@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Star_Properties.BAL.Interface.IAuthBAL;
 using Star_Properties.Model.EntityModel;
 using Star_Properties.Model.RequestModel;
@@ -118,21 +119,12 @@ namespace Star_Properties.BAL.Service.AuthBAL
 
         public async Task<string> UpdateUserCrediential(UpdateUserRequest request, Guid userId)
         {
-            var user = await _repo.GetUserByUserId(request.UserId);
-            var username = await _repo.GetUserByUsername(request.Username);
+            var result = await _repo.UpdateUserCrediential(request.UserId, request.Password, userId);
 
-            if (user == null)
-                throw new Exception("User not found");
-
-            if (username != null)
-                throw new Exception("User already exists");
-
-            var requestedUsername = request.Username?.Trim();
-            var requestedEmail = request.Email?.Trim();
-            var requestedName = request.Name?.Trim();
-            var requestedRole = request.Role?.Trim();
-
-            return "User updated successfully";
+            if (result)
+                return "User updated successfully";
+            else
+                return "Failed to Update User";
         }
 
         public async Task<string> DeleteUserCrediential(DeleteUserCredientialsRequest request, Guid userId)

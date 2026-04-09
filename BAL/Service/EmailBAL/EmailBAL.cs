@@ -17,11 +17,7 @@ namespace Star_Properties.BAL.Service.EmailBAL
         private readonly IConfiguration _appsettings;
         private readonly ApplicationDbContext _context;
 
-        public EmailBAL(
-            IEmailRepository repo,
-            IOptions<SmtpSettings> smtp,
-            IConfiguration appsettings,
-            ApplicationDbContext context)
+        public EmailBAL(IEmailRepository repo,IOptions<SmtpSettings> smtp,IConfiguration appsettings,ApplicationDbContext context)
         {
             _repo = repo;
             _smtp = smtp.Value;
@@ -137,12 +133,7 @@ namespace Star_Properties.BAL.Service.EmailBAL
             }
         }
 
-        private async Task SendMail(
-            SmtpClient smtp,
-            string to,
-            string subject,
-            string templatePath,
-            SendEmailRequest request)
+        private async Task SendMail(SmtpClient smtp,string to,string subject,string templatePath,SendEmailRequest request)
         {
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), templatePath);
 
