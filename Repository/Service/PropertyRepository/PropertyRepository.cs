@@ -348,10 +348,10 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.UpdatedAt = DateTime.UtcNow;
             property.UpdatedBy = userId;
 
-            var audits = TrackAllChanges(oldProperty, property, userId);
+            //var audits = TrackAllChanges(oldProperty, property, userId);
 
-            if (audits.Any())
-                await _context.PropertyAudit.AddRangeAsync(audits);
+            //if (audits.Any())
+            //    await _context.PropertyAudit.AddRangeAsync(audits);
 
             await _context.SaveChangesAsync();
         }
