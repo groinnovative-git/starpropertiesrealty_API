@@ -118,13 +118,13 @@ namespace Star_Properties.Controllers.Admin.AuthController
 
                     var emailRequest = new SendEmailRequest
                     {
-                        ToEmails = new List<string> { updatedUser.Email },
+                        ToEmails = new List<string> { request.Email },
                         TemplateType = "PasswordUpdate",
                         CompanyName = "StarPropertiesAndRealty",
                         LoginUrl = string.Empty,
                         UserName = updatedUser.Name,
                         Username = updatedUser.Username,
-                        Email = updatedUser.Email,
+                        Email = request.Email,
                         Role = updatedUser.Role,
                         Password = request.Password,
                         UpdatedByName = updatedByUser?.Name ?? updatedByUser?.Username ?? "Admin",

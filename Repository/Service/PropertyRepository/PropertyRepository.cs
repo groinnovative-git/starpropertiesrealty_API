@@ -21,7 +21,11 @@ namespace Star_Properties.Repository.Service.PropertyRepository
         // ==========================
         public async Task<Guid> AddProperty(PropertyRequest req, Guid userId)
         {
-            var imageUrls = await SaveImagesAsync(req.Images);
+
+            var uploadedImages = await SaveImagesAsync(req.Images);
+            var frontendImages = GetFrontendImages(req);
+
+            var finalImages = uploadedImages.Any() ? uploadedImages : frontendImages;
 
             var property = new PropertiesDetailsMaster
             {
@@ -128,7 +132,10 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 IsRental = req.IsRental,
 
                 // Save images as semi-colon separated string
-                ImageUrls = imageUrls.Any() ? string.Join(";", imageUrls) : "",
+                //ImageUrls = imageUrls.Any() ? string.Join(";", imageUrls) : "",
+
+
+                ImageUrls = finalImages.Any() ? string.Join(";", finalImages) : "",
 
                 VideoUrl1 = req.VideoUrl1,
                 VideoUrl2 = req.VideoUrl2,
@@ -180,7 +187,10 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             if (property == null)
                 throw new Exception("Property not found");
 
-            var imageUrls = await SaveImagesAsync(req.Images);
+            //var imageUrls = await SaveImagesAsync(req.Images);
+
+            var uploadedImages = await SaveImagesAsync(req.Images);
+            var frontendImages = GetFrontendImages(req);
 
             // FULL UPDATE
             property.PropertyTitle = req.PropertyTitle;
@@ -284,10 +294,23 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.IsRental = req.IsRental;
 
             // Save images safely: new uploads > existing URLs from frontend > keep DB value
-            if (imageUrls.Any())
-                property.ImageUrls = string.Join(";", imageUrls);
+            //if (imageUrls.Any())
+            //    property.ImageUrls = string.Join(";", imageUrls);
+            //else if (!string.IsNullOrEmpty(req.ImageUrls))
+            //    property.ImageUrls = req.ImageUrls;
+
+            if (uploadedImages.Any())
+            {
+                property.ImageUrls = string.Join(";", uploadedImages);
+            }
+            else if (frontendImages.Any())
+            {
+                property.ImageUrls = string.Join(";", frontendImages);
+            }
             else if (!string.IsNullOrEmpty(req.ImageUrls))
+            {
                 property.ImageUrls = req.ImageUrls;
+            }
 
             property.VideoUrl1 = req.VideoUrl1;
             property.VideoUrl2 = req.VideoUrl2;
@@ -299,7 +322,6 @@ namespace Star_Properties.Repository.Service.PropertyRepository
 
             var audits = TrackAllChanges(oldProperty, property, userId);
 
-            // STEP 5: SAVE ONCE (🔥 PERFORMANCE)
             if (audits.Any())
                 await _context.PropertyAudit.AddRangeAsync(audits);
 
@@ -452,6 +474,10 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 LocationIframe = p.LocationIframe,
                 PropertyStatus = p.PropertyStatus,
                 IsActive = p.IsActive,
+                CreatedBy = _context.UserMaster.FirstOrDefault(u => u.UserId == p.CreatedBy)?.Name ?? "Unknown",
+                CreatedAt = p.CreatedAt,
+                UpdatedBy = _context.UserMaster.FirstOrDefault(u => u.UserId == p.UpdatedBy)?.Name ?? "Unknown",
+                UpdatedAt = p.UpdatedAt
 
             }).ToList();
         }
@@ -573,6 +599,10 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 LocationIframe = property.LocationIframe,
                 PropertyStatus = property.PropertyStatus,
                 IsActive = property.IsActive,
+                CreatedBy = _context.UserMaster.FirstOrDefault(u => u.UserId == property.CreatedBy)?.Name ?? "Unknown",
+                CreatedAt = property.CreatedAt,
+                UpdatedBy = _context.UserMaster.FirstOrDefault(u => u.UserId == property.UpdatedBy)?.Name ?? "Unknown",
+                UpdatedAt = property.UpdatedAt
 
             };
         }
@@ -786,6 +816,20 @@ namespace Star_Properties.Repository.Service.PropertyRepository
         {
             return System.Text.RegularExpressions.Regex
                 .Replace(name, "([a-z])([A-Z])", "$1 $2");
+        }
+
+        private List<string> GetFrontendImages(PropertyRequest req)
+        {
+            return new List<string>
+            {
+                req.Img1,
+                req.Img2,
+                req.Img3,
+                req.Img4,
+                req.Img5
+            }
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToList();
         }
     }
 }

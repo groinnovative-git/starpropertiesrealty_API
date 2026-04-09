@@ -111,6 +111,12 @@ namespace Star_Properties.Model.RequestModel
         // MEDIA
         public string? ImageUrls { get; set; }  // existing image URLs (semicolon-separated) sent during update
 
+        public string? Img1 { get; set; }
+        public string? Img2 { get; set; }
+        public string? Img3 { get; set; }
+        public string? Img4 { get; set; }
+        public string? Img5 { get; set; }
+
         [ValidateNever]
         public IFormFileCollection? Images { get; set; }
 
