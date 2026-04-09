@@ -372,19 +372,19 @@ namespace Star_Properties.Repository.Service.PropertyRepository
 
             await _context.SaveChangesAsync();
 
-            var audit = new PropertyAudit
-            {
-                PropertyAuditId = Guid.NewGuid(),
-                PropertyId = propertyId,
-                FieldName = "Property",
-                OldValue = "Active",
-                NewValue = "Deleted",
-                ActionType = "Delete",
-                ModifiedBy = Guid.Empty, 
-                ModifiedOn = DateTime.UtcNow
-            };
+            //var audit = new PropertyAudit
+            //{
+            //    PropertyAuditId = Guid.NewGuid(),
+            //    PropertyId = propertyId,
+            //    FieldName = "Property",
+            //    OldValue = "Active",
+            //    NewValue = "Deleted",
+            //    ActionType = "Delete",
+            //    ModifiedBy = Guid.Empty, 
+            //    ModifiedOn = DateTime.UtcNow
+            //};
 
-            _context.PropertyAudit.Add(audit);
+            //_context.PropertyAudit.Add(audit);
             await _context.SaveChangesAsync();
         }
 
