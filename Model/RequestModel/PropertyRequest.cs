@@ -122,6 +122,15 @@ namespace Star_Properties.Model.RequestModel
         public bool HasSecurityGuard { get; set; }
         public bool HasSharedKitchen { get; set; }
         public bool IsCookingAllowed { get; set; }
+
+        public decimal? MonthlyRent { get; set; }
+        public decimal? DepositAmount { get; set; }
+        public DateTime? AvailableFrom { get; set; }
+        public string? SharingType { get; set; }
+        public string? GenderAllowed { get; set; }
+        public bool HasAttachedBathroom { get; set; }
+        public bool IsFurnished { get; set; }
+        public bool? IsSale { get; set; }
         // MEDIA
         public string? ImageUrls { get; set; }  // existing image URLs (semicolon-separated) sent during update
 

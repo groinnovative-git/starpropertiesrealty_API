@@ -1,9 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp.Formats.Webp;
 using Star_Properties.DbConfiguration;
 using Star_Properties.Model.EntityModel;
 using Star_Properties.Model.RequestModel;
 using Star_Properties.Model.ResponseModel;
 using Star_Properties.Repository.Interface.IPropertyRepository;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace Star_Properties.Repository.Service.PropertyRepository
 {
@@ -130,6 +134,14 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 SchoolDistance = req.SchoolDistance,
                 BusStandDistance = req.BusStandDistance,
                 IsRental = req.IsRental,
+                MonthlyRent = req.MonthlyRent,
+                DepositAmount = req.DepositAmount,
+                AvailableFrom = req.AvailableFrom,
+                SharingType = req.SharingType,
+                GenderAllowed = req.GenderAllowed,
+                HasAttachedBathroom = req.HasAttachedBathroom,
+                IsFurnished = req.IsFurnished,
+                IsSale = req.IsSale,
                 // PG AMENITIES
                 HasFoodIncluded = req.HasFoodIncluded,
                 HasWashingMachine = req.HasWashingMachine,
@@ -306,6 +318,14 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.SchoolDistance = req.SchoolDistance;
             property.BusStandDistance = req.BusStandDistance;
             property.IsRental = req.IsRental;
+            property.MonthlyRent = req.MonthlyRent;
+            property.DepositAmount = req.DepositAmount;
+            property.AvailableFrom = req.AvailableFrom;
+            property.SharingType = req.SharingType;
+            property.GenderAllowed = req.GenderAllowed;
+            property.HasAttachedBathroom = req.HasAttachedBathroom;
+            property.IsFurnished = req.IsFurnished;
+            property.IsSale = req.IsSale;
             // PG AMENITIES
             property.HasFoodIncluded = req.HasFoodIncluded;
             property.HasWashingMachine = req.HasWashingMachine;
@@ -511,6 +531,14 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                     HasSecurityGuard = p.HasSecurityGuard ?? false,
                     HasSharedKitchen = p.HasSharedKitchen ?? false,
                     IsCookingAllowed = p.IsCookingAllowed ?? false,
+                    MonthlyRent = p.MonthlyRent,
+                    DepositAmount = p.DepositAmount,
+                    AvailableFrom = p.AvailableFrom,
+                    SharingType = p.SharingType,
+                    GenderAllowed = p.GenderAllowed,
+                    HasAttachedBathroom = p.HasAttachedBathroom ?? false,
+                    IsFurnished = p.IsFurnished ?? false,
+                    IsSale = p.IsSale ?? false,
                     //ImageUrls = string.IsNullOrEmpty(p.ImageUrls) ? new List<string>() : p.ImageUrls.Split(';').ToList(),
                     Img1 = imgs.Item1,
                     Img2 = imgs.Item2,
@@ -656,6 +684,14 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 HasSecurityGuard = property.HasSecurityGuard ?? false,
                 HasSharedKitchen = property.HasSharedKitchen ?? false,
                 IsCookingAllowed = property.IsCookingAllowed ?? false,
+                MonthlyRent = property.MonthlyRent,
+                DepositAmount = property.DepositAmount,
+                AvailableFrom = property.AvailableFrom,
+                SharingType = property.SharingType,
+                GenderAllowed = property.GenderAllowed,
+                HasAttachedBathroom = property.HasAttachedBathroom ?? false,
+                IsFurnished = property.IsFurnished ?? false,
+                IsSale = property.IsSale ?? false,
                 //ImageUrls = string.IsNullOrEmpty(property.ImageUrls) ? new List<string>() : property.ImageUrls.Split(';').ToList(),
                 Img1 = imgs.Item1,
                 Img2 = imgs.Item2,
@@ -812,9 +848,40 @@ namespace Star_Properties.Repository.Service.PropertyRepository
         // ==========================
         // SAVE IMAGES
         // ==========================
+        //private async Task<List<string>> SaveImagesAsync(IFormFileCollection images)
+        //{
+        //    var imageUrls = new List<string>();
+        //    var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "properties");
+
+        //    if (!Directory.Exists(uploadPath))
+        //        Directory.CreateDirectory(uploadPath);
+
+        //    if (images == null || images.Count == 0)
+        //        return imageUrls;
+
+        //    foreach (var file in images)
+        //    {
+        //        if (file != null && file.Length > 0)
+        //        {
+        //            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+        //            var filePath = Path.Combine(uploadPath, fileName);
+
+        //            using (var stream = new FileStream(filePath, FileMode.Create))
+        //            {
+        //                await file.CopyToAsync(stream);
+        //            }
+
+        //            imageUrls.Add($"/uploads/properties/{fileName}");
+        //        }
+        //    }
+
+        //    return imageUrls;
+        //}
+
         private async Task<List<string>> SaveImagesAsync(IFormFileCollection images)
         {
             var imageUrls = new List<string>();
+
             var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "properties");
 
             if (!Directory.Exists(uploadPath))
@@ -827,14 +894,27 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             {
                 if (file != null && file.Length > 0)
                 {
-                    var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                    // Unique file name
+                    var fileName = $"{Guid.NewGuid()}.webp";
                     var filePath = Path.Combine(uploadPath, fileName);
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    using (var image = await Image.LoadAsync(file.OpenReadStream()))
                     {
-                        await file.CopyToAsync(stream);
+                        // Resize
+                        image.Mutate(x => x.Resize(new ResizeOptions
+                        {
+                            Mode = ResizeMode.Max,
+                            Size = new Size(1280, 1280) // max width/height
+                        }));
+
+                        // Save as WebP 
+                        await image.SaveAsync(filePath, new WebpEncoder
+                        {
+                            Quality = 75 // 70–80 Quality
+                        });
                     }
 
+                    // Save relative path
                     imageUrls.Add($"/uploads/properties/{fileName}");
                 }
             }
@@ -842,45 +922,47 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             return imageUrls;
         }
 
-        private List<PropertyAudit> TrackAllChanges(
-            PropertiesDetailsMaster oldData,
-            PropertiesDetailsMaster newData,
-            Guid userId)
-        {
-            var audits = new List<PropertyAudit>();
 
-            var properties = typeof(PropertiesDetailsMaster).GetProperties();
+        // track changes for audit log - compares old vs new and creates entries for changed fields
+        //private List<PropertyAudit> TrackAllChanges(
+        //    PropertiesDetailsMaster oldData,
+        //    PropertiesDetailsMaster newData,
+        //    Guid userId)
+        //{
+        //    var audits = new List<PropertyAudit>();
 
-            foreach (var prop in properties)
-            {
-                // Skip unnecessary fields
-                if (prop.Name == "CreatedAt" ||
-                    prop.Name == "CreatedBy" ||
-                    prop.Name == "UpdatedAt" ||
-                    prop.Name == "UpdatedBy")
-                    continue;
+        //    var properties = typeof(PropertiesDetailsMaster).GetProperties();
 
-                var oldValue = prop.GetValue(oldData)?.ToString();
-                var newValue = prop.GetValue(newData)?.ToString();
+        //    foreach (var prop in properties)
+        //    {
+        //        // Skip unnecessary fields
+        //        if (prop.Name == "CreatedAt" ||
+        //            prop.Name == "CreatedBy" ||
+        //            prop.Name == "UpdatedAt" ||
+        //            prop.Name == "UpdatedBy")
+        //            continue;
 
-                if (oldValue != newValue)
-                {
-                    audits.Add(new PropertyAudit
-                    {
-                        PropertyAuditId = Guid.NewGuid(),
-                        PropertyId = newData.PropertiesDetailsId,
-                        FieldName = FormatFieldName(prop.Name),
-                        OldValue = oldValue,
-                        NewValue = newValue,
-                        ActionType = "Update",
-                        ModifiedBy = userId,
-                        ModifiedOn = DateTime.UtcNow
-                    });
-                }
-            }
+        //        var oldValue = prop.GetValue(oldData)?.ToString();
+        //        var newValue = prop.GetValue(newData)?.ToString();
 
-            return audits;
-        }
+        //        if (oldValue != newValue)
+        //        {
+        //            audits.Add(new PropertyAudit
+        //            {
+        //                PropertyAuditId = Guid.NewGuid(),
+        //                PropertyId = newData.PropertiesDetailsId,
+        //                FieldName = FormatFieldName(prop.Name),
+        //                OldValue = oldValue,
+        //                NewValue = newValue,
+        //                ActionType = "Update",
+        //                ModifiedBy = userId,
+        //                ModifiedOn = DateTime.UtcNow
+        //            });
+        //        }
+        //    }
+
+        //    return audits;
+        //}
 
         private string FormatFieldName(string name)
         {
