@@ -133,6 +133,7 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 CollegeDistance = req.CollegeDistance,
                 SchoolDistance = req.SchoolDistance,
                 BusStandDistance = req.BusStandDistance,
+                RailWayStationDistance = req.RailWayStationDistance,
                 IsRental = req.IsRental,
                 MonthlyRent = req.MonthlyRent,
                 DepositAmount = req.DepositAmount,
@@ -317,6 +318,7 @@ namespace Star_Properties.Repository.Service.PropertyRepository
             property.CollegeDistance = req.CollegeDistance;
             property.SchoolDistance = req.SchoolDistance;
             property.BusStandDistance = req.BusStandDistance;
+            property.RailWayStationDistance = req.RailWayStationDistance;
             property.IsRental = req.IsRental;
             property.MonthlyRent = req.MonthlyRent;
             property.DepositAmount = req.DepositAmount;
@@ -517,6 +519,7 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                     CollegeDistance = p.CollegeDistance,
                     SchoolDistance = p.SchoolDistance,
                     BusStandDistance = p.BusStandDistance,
+                    RailWayStationDistance = p.RailWayStationDistance,
                     IsRental = p.IsRental ?? false,
                     HasFoodIncluded = p.HasFoodIncluded ?? false,
                     HasWashingMachine = p.HasWashingMachine ?? false,
@@ -670,6 +673,7 @@ namespace Star_Properties.Repository.Service.PropertyRepository
                 CollegeDistance = property.CollegeDistance,
                 SchoolDistance = property.SchoolDistance,
                 BusStandDistance = property.BusStandDistance,
+                RailWayStationDistance = property.RailWayStationDistance,
                 IsRental = property.IsRental ?? false,
                 HasFoodIncluded = property.HasFoodIncluded ?? false,
                 HasWashingMachine = property.HasWashingMachine ?? false,

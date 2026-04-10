@@ -110,6 +110,7 @@ namespace Star_Properties.Model.EntityModel
         public string? CollegeDistance { get; set; }
         public string? SchoolDistance { get; set; }
         public string? BusStandDistance { get; set; }
+        public string? RailWayStationDistance { get; set; }
         public bool? IsRental { get; set; }
         // PG / ROOM AMENITIES
         public bool? HasFoodIncluded { get; set; }
